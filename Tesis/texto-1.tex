@@ -1,0 +1,61 @@
+\documentclass{article}
+\usepackage{amsmath}
+
+
+\begin{document}
+\section {Definir ciertas cosas}
+
+Lo que definiremos aqui son algunas generalizaciones que vamos a utilizar en ambos modelos:
+
+\begin{enumerate}
+\item {$ r \rightarrow $ Rutas}
+
+\item {$i,j \rightarrow$ Arcos donde $j=<j_s,j_e>$ y $j_s$ es el nodo inicial del arco $j$ y $j_f$ el final}
+
+\item {$G=\{V,E\} \rightarrow$ Grafo dirigido y ponderado donde para todo $v \in V$ se cumple que $v$ es un cliente de nuestro sistema y si $<v_1,v_2> \in E$
+hay un arco de $v_1$ a $v_2$. G es conexo y $v_0$ es el unico punto de acumulacion por lo que todo nodo pertenece a un ciclo que empieza y termina en $v_0$. Si eliminamos $v_0$ entonces se forman varias Componentes Conexas ($CC$ para los amigos), cada $CC$ representa una ruta distinta en nuestro sistema. Luego podemos enumerarlas.}
+
+\item {Se puede establecer una especie de orden entre los arcos definiendo que $i<j$ si $i$ aparece primero en una ruta que $j$}
+
+\end{enumerate}
+
+Hasta aqui lo que tienen en comun ambos modelos.
+\section {Modelo (X)}
+
+\subsection{Variables del sistema}
+
+
+
+\begin{enumerate}
+\item
+$
+ X_{r_1 j_1 j_2 r_2 i}= 
+\begin{cases}  
+    1 & \text{si eliminamos $j_1,j_2$ de $r_1$ e insertamos en $i$ de $r_2$ ($j_1< j_2$) }\\
+    0 & \text{si no } 
+\end{cases}
+$
+\item{$c_{rj}\rightarrow$ Peso de $j$ en $r$}
+
+\item{$S_{rij_1}\rightarrow$ Suma de los pesos de los arcos a partir de $i+1$ hasta $j-1$}\\
+($S_{rij_1}=\sum\limits_{j_2=i+1}^{j_1-1} c_{rj_2}$ )
+
+\item{$K_{r_1ir_2j}\rightarrow$ Peso del arco $<j_s,i_e>$ donde $i$ se encuentra en la ruta $r_1$ y $j$ en la ruta $r_2$}
+
+\item{$L_{r_1ir_2j}\rightarrow$ Peso del arco $<i_s,j_e>$ donde $i$ se encuentra en la ruta $r_1$ y $j$ en la ruta $r_2$}
+
+\item{$P_r\rightarrow$ Peso total de $r$ para esta solucion ($P_r=\sum\limits_{j=1}^{n} c_{rj}$ ) }
+
+\item{$Eliminar=\sum\limits_{r_1=1}^{n_{r}} \sum\limits_{j_1=1}^{n_{j_1}}\sum\limits_{j_2=1}^{n_{j_2}}\sum\limits_{r_2=1}^{n_{r}}\sum\limits_{i=1}^{n_i} X_{{r_1}{j_1}{j_2}{r_2}{i}}*(P_{r_1}-S_{{r_1}{j_1}{j_2}}-c_{{r_1}{j_1}}-c_{{r_1}{j_2}}+L_{{r_1}{j_1}{r_1}{j_2}})$}
+
+\item{$Sumar=\sum\limits_{r_1=1}^{n_{r}} \sum\limits_{j_1=1}^{n_{j_1}}\sum\limits_{j_2=1}^{n_{j_2}}\sum\limits_{r_2=1}^{n_{r}}\sum\limits_{i=1}^{n_i} X_{{r_1}{j_1}{j_2}{r_2}{i}}*(P_{r_2} - c_{{r_2}{i}} + S_{{r_1}{j_1}{j_2}}+K_{{r_1}{j_1}{r_2}{i}} + L_{{r_1}{j_2}{r_2}{i}}) $}
+\end{enumerate}
+\subsection{El modelo}
+	Funcion objetivo y restricciones propias del VRP.\\
+Las que añadimos nosotros:
+\begin{enumerate}
+\item{$\sum\limits_{i=j_1}^{j_2} X_{rj_1j_2ri}=0$  $ \forall r$, $\forall j_1<j_2 $}
+\item{$\sum P_r> Eliminar + Sumar $}
+\item{$ \sum\limits_{r_1=1}^{n_{r}} \sum\limits_{j_1=1}^{n_{j_1}}\sum\limits_{j_2=1}^{n_{j_2}}\sum\limits_{r_2=1}^{n_{r}}\sum\limits_{i=1}^{n_i}X_{{r_1}{j_1}{j_2}{r_2}{i}} = 1 $}
+\end{enumerate}
+\end{document}
