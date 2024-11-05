@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "tuple": "cpp",
+        "xstring": "cpp",
+        "vector": "cpp"
+    }
+}
