@@ -7,13 +7,8 @@
 
 using namespace std;
 
-void optimization(const std::vector<vector<int>> &matrix_cost, const std::vector<vector<int>> &routes, int capacity, bool binary = true)
+void optimization(Graph &model, bool binary = true)
 {
-
-    Graph model(matrix_cost, routes);
-    model.print_graph();
-    cout << endl;
-
     glp_prob *lp = glp_create_prob();
     glp_set_prob_name(lp, "Model-X");
     glp_set_obj_dir(lp, GLP_MIN);
@@ -51,15 +46,25 @@ void optimization(const std::vector<vector<int>> &matrix_cost, const std::vector
         const tuple<int, int, int, int, int> &key = kv.first;
         int index = kv.second;
         glp_set_col_name(lp, index, ("X_" + to_string(index)).c_str());
-        // glp_set_col_kind(lp, index, GLP_BV); // GLP_BV asegura que X solo tome valores 0 o 1
-        glp_set_col_bnds(lp, index, GLP_DB, 0.0001, 1.0); // 0 <= X <= 1
-        glp_set_obj_coef(lp, index, 0.0);                 // Coeficiente inicial
+        if (binary)
+        {
+            glp_set_col_kind(lp, index, GLP_BV); // GLP_BV para variables binarias
+        }
+        else
+        {
+            glp_set_col_bnds(lp, index, GLP_DB, 0.0001, 1.0); // 0 <= X <= 1
+        }
+        glp_set_obj_coef(lp, index, 0.0); // Coeficiente inicial
         cout << "Index: " << index << " Key: (" << get<0>(key) << "," << get<1>(key) << "," << get<2>(key) << "," << get<3>(key) << "," << get<4>(key) << ")" << endl;
     }
 
+    int capacity = model.capacity;
+    vector<int> &demands = model.demands;
     map<int, int> &P = model.route_cost;
+    map<int, int> &route_demand = model.route_demand;
     map<pair<int, int>, int> &c = model.c;
     map<tuple<int, int, int>, int> &S = model.S;
+    map<tuple<int, int, int>, int> &D = model.D;
     map<tuple<int, int, int, int>, int> &K = model.K;
     map<tuple<int, int, int, int>, int> &L = model.L;
 
@@ -85,6 +90,7 @@ void optimization(const std::vector<vector<int>> &matrix_cost, const std::vector
 
                         // Agrega el término a la función objetivo
                         coeficent_objetive += (sumar + eliminar);
+                        cout << "index: " << indice << " coeficent: " << coeficent_objetive << endl;
                         glp_set_obj_coef(lp, indice, coeficent_objetive);
                     }
                 }
@@ -104,7 +110,6 @@ void optimization(const std::vector<vector<int>> &matrix_cost, const std::vector
         indices.push_back(var_index);
         coeficientes.push_back(1.0);
     }
-
     // Aplicar la restricción global con todos los índices y coeficientes de las X
     glp_set_mat_row(lp, global_row_idx, indices.size() - 1, indices.data(), coeficientes.data());
 
@@ -126,18 +131,47 @@ void optimization(const std::vector<vector<int>> &matrix_cost, const std::vector
     // Aplicar la restricción global con todos los índices y coeficientes de las X
     // glp_set_mat_row(lp, global_row_idx1, indices2.size() - 1, indices2.data(), coeficientes2.data());
 
+    // Restriccion de capacidad
+
+    for (int r = 0; r < n_r; ++r)
+    {
+        // Crear una nueva restricción para la capacidad de la ruta `r`
+        int row_idx = glp_add_rows(lp, 1);
+        glp_set_row_bnds(lp, row_idx, GLP_UP, 0.0, capacity); // La demanda total no debe exceder la capacidad
+
+        vector<int> indicesc;
+        vector<double> coeficientesc;
+
+        for (const auto &kv : X_indices)
+        {
+            int r1 = get<0>(kv.first); // Ruta `r` desde la que se selecciona la subruta
+            int j1 = get<1>(kv.first); // Primer cliente de la subruta
+            int j2 = get<2>(kv.first); // Último cliente de la subruta
+
+            if (r1 == r)
+            {
+                int var_index = kv.second;
+
+                // Suma la demanda de los clientes de `j1` a `j2`
+                double demanda_total = D[{r1, j1, j2}] + route_demand[r];
+                indicesc.push_back(var_index);
+                coeficientesc.push_back(demanda_total); // Coeficiente de demanda total de la subruta
+            }
+        }
+
+        // Aplica la restricción para que la suma de demandas no exceda la capacidad del vehículo
+        glp_set_mat_row(lp, row_idx, indicesc.size() - 1, indicesc.data(), coeficientesc.data());
+    }
+
     glp_simplex(lp, NULL); // Resolución usando el método simplex
 
-    // Obtener resultados
     if (glp_get_status(lp) == GLP_OPT)
     {
         std::cout << "Solución óptima encontrada." << std::endl;
 
-        // Obtener el valor de la función objetivo
         double obj_value = glp_get_obj_val(lp);
         std::cout << "Valor de la función objetivo: " << obj_value << std::endl;
 
-        // Obtener valores de las variables
         for (int var = 1; var <= X_indices.size(); var++)
         {
             double value = glp_get_col_prim(lp, var);
@@ -152,7 +186,6 @@ void optimization(const std::vector<vector<int>> &matrix_cost, const std::vector
         std::cout << "No se encontró una solución óptima." << std::endl;
     }
 
-    // Limpieza
     glp_delete_prob(lp);
     glp_free_env();
 }
@@ -169,5 +202,15 @@ int main()
         {1, 2, 3, 6, 0, 8},
         {4, 1, 5, 7, 8, 0}};
     vector<vector<int>> list = {{2, 3, 1}, {4, 5}};
-    optimization(matrix_cost, list, capacity);
+    vector<int> demands = {0, 3, 1, 4, 5, 2};
+
+    /*
+
+(0,2) (2,3) (3,1) (1,0)   0->2->3->1->5->0 = 4+1+5+1+4= 15
+(0,4) (4,5) (5,0)         0->4->5->0 = 1+1 = 2
+
+*/
+
+    Graph model(matrix_cost, list, demands, 10);
+    optimization(model);
 }

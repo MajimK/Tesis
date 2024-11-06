@@ -18,12 +18,15 @@ public:
     vector<vector<pair<int, int>>> routes;
     vector<vector<int>> weight;
     map<int, int> route_cost;
+    map<int, int> route_demand;
     map<pair<int, int>, int> c;
     map<tuple<int, int, int>, int> S;
+    map<tuple<int, int, int>, int> D;
     map<tuple<int, int, int, int>, int> K, L;
-    Graph(const vector<vector<int>> &matrix, const vector<vector<int>> &routes /*, const vector<int> clients_demands*/) : weight(matrix) /*, demands(clients_demands)*/
+    Graph(const vector<vector<int>> &matrix, const vector<vector<int>> &routes, const vector<int> clients_demands, int capac) : weight(matrix), demands(clients_demands), capacity(capac)
     {
         add_route(routes);
+        calc_demands(routes);
         calc_constant();
     }
 
@@ -156,6 +159,18 @@ private:
             this->routes.push_back(path);
         }
     }
+    void calc_demands(const vector<vector<int>> &routes)
+    {
+        for (size_t i = 0; i < routes.size(); i++)
+        {
+            int client_demands = 0;
+            for (size_t j = 0; j < routes[i].size(); j++)
+            {
+                client_demands += demands[routes[i][j]];
+            }
+            route_demand[i] = client_demands;
+        }
+    }
     void calc_constant()
     {
         for (auto &cost : route_cost)
@@ -199,6 +214,23 @@ private:
             }
         }
 
+        // Calculate Demanda por subruta
+        for (size_t route = 0; route < routes.size(); route++)
+        {
+            for (size_t j1 = 0; j1 < routes[route].size() - 1; j1++)
+            {
+                for (size_t j2 = j1 + 1; j2 < routes[route].size(); j2++)
+                {
+                    int sum = 0;
+                    for (size_t k = j1; k < j2; k++)
+                    {
+                        sum += demands[routes[route][k].second];
+                    }
+                    D[{route, j1, j2}] = sum;
+                }
+            }
+        }
+
         // Calculate K
         for (size_t route1 = 0; route1 < routes.size(); ++route1)
         {
@@ -235,10 +267,10 @@ private:
     }
 };
 
-void printear(const map<pair<int, int>, int> &matrix)
+void printear(const map<tuple<int, int, int>, int> &matrix)
 {
     for (const auto &item : matrix)
-        cout << "{" << item.first.first << ", " << item.first.second << "} -> " << item.second << endl;
+        cout << "{" << get<0>(item.first) << ", " << get<1>(item.first) << ", " << get<2>(item.first) << "} -> " << item.second << endl;
 }
 
 /*
