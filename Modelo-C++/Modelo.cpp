@@ -13,15 +13,13 @@ public:
     int total_cost = 0;
     int capacity = 0;
     vector<int> demands;
-    vector<int> clients;
     vector<pair<int, int>> bridges;
     vector<vector<pair<int, int>>> routes;
     vector<vector<int>> weight;
     map<int, int> route_cost;
     map<int, int> route_demand;
     map<pair<int, int>, int> c;
-    map<tuple<int, int, int>, int> S;
-    map<tuple<int, int, int>, int> D;
+    map<tuple<int, int, int>, int> S, D;
     map<tuple<int, int, int, int>, int> K, L;
     Graph(const vector<vector<int>> &matrix, const vector<vector<int>> &routes, const vector<int> clients_demands, int capac) : weight(matrix), demands(clients_demands), capacity(capac)
     {
@@ -145,8 +143,6 @@ private:
             vector<pair<int, int>> path;
             for (int item : route)
             {
-                if (find(clients.begin(), clients.end(), item) == clients.end())
-                    clients.push_back(item);
                 path.push_back({client, item});
                 cost += weight[client][item];
                 bridges.push_back({client, item});
@@ -272,10 +268,3 @@ void printear(const map<tuple<int, int, int>, int> &matrix)
     for (const auto &item : matrix)
         cout << "{" << get<0>(item.first) << ", " << get<1>(item.first) << ", " << get<2>(item.first) << "} -> " << item.second << endl;
 }
-
-/*
-
-(0,1) (1,2) (2,3) (3,0)   0->1->2->3->0
-(0,4) (4,5) (5,0)         0->4->5->0
-
-*/

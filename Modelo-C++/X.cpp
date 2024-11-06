@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void optimization(Graph &model, bool binary = true)
+void optimization(Graph &model, bool binary = true, bool verbose = false, bool cvrp = true)
 {
     glp_prob *lp = glp_create_prob();
     glp_set_prob_name(lp, "Model-X");
@@ -16,7 +16,7 @@ void optimization(Graph &model, bool binary = true)
     int n_r = model.routes.size();
     int var_count = 0;
 
-    map<tuple<int, int, int, int, int>, double> X_indices;
+    map<tuple<int, int, int, int, int>, double> X_index;
     for (int r1 = 0; r1 < n_r; ++r1)
     {
         for (int j1 = 0; j1 < model.routes[r1].size(); ++j1)
@@ -33,7 +33,7 @@ void optimization(Graph &model, bool binary = true)
                         }
 
                         var_count++;
-                        X_indices[{r1, j1, j2, r2, i}] = var_count;
+                        X_index[{r1, j1, j2, r2, i}] = var_count;
                     }
                 }
             }
@@ -41,11 +41,12 @@ void optimization(Graph &model, bool binary = true)
     }
 
     glp_add_cols(lp, var_count);
-    for (const auto &kv : X_indices)
+    for (const auto &kv : X_index)
     {
         const tuple<int, int, int, int, int> &key = kv.first;
         int index = kv.second;
         glp_set_col_name(lp, index, ("X_" + to_string(index)).c_str());
+
         if (binary)
         {
             glp_set_col_kind(lp, index, GLP_BV); // GLP_BV para variables binarias
@@ -54,12 +55,15 @@ void optimization(Graph &model, bool binary = true)
         {
             glp_set_col_bnds(lp, index, GLP_DB, 0.0001, 1.0); // 0 <= X <= 1
         }
+
         glp_set_obj_coef(lp, index, 0.0); // Coeficiente inicial
-        cout << "Index: " << index << " Key: (" << get<0>(key) << "," << get<1>(key) << "," << get<2>(key) << "," << get<3>(key) << "," << get<4>(key) << ")" << endl;
+        if (verbose)
+        {
+            cout << "Index: " << index << " Key: (" << get<0>(key) << "," << get<1>(key) << "," << get<2>(key) << "," << get<3>(key) << "," << get<4>(key) << ")" << endl;
+        }
     }
 
     int capacity = model.capacity;
-    vector<int> &demands = model.demands;
     map<int, int> &P = model.route_cost;
     map<int, int> &route_demand = model.route_demand;
     map<pair<int, int>, int> &c = model.c;
@@ -85,12 +89,14 @@ void optimization(Graph &model, bool binary = true)
                         }
                         double eliminar = P[r1] - S[{r1, j1, j2}] - c[{r1, j1}] - c[{r1, j2}] + L[{r1, j1, r1, j2}];
                         double sumar = P[r2] - c[{r2, i}] + S[{r1, j1, j2}] + K[{r1, j1, r2, i}] + L[{r1, j2, r2, i}];
-                        int indice = X_indices[{r1, j1, j2, r2, i}];
+                        int indice = X_index[{r1, j1, j2, r2, i}];
                         double coeficent_objetive = model.total_cost - P[r1] - P[r2];
 
-                        // Agrega el término a la función objetivo
                         coeficent_objetive += (sumar + eliminar);
-                        cout << "index: " << indice << " coeficent: " << coeficent_objetive << endl;
+                        if (verbose)
+                        {
+                            cout << "index: " << indice << " coeficent: " << coeficent_objetive << endl;
+                        }
                         glp_set_obj_coef(lp, indice, coeficent_objetive);
                     }
                 }
@@ -99,91 +105,70 @@ void optimization(Graph &model, bool binary = true)
     }
     // Restricción de Unicidad: Suma de todas las X <= 1
     int global_row_idx = glp_add_rows(lp, 1);
-    glp_set_row_bnds(lp, global_row_idx, GLP_LO, 1.0, 0.0); // Configura el límite superior como 1.0
+    glp_set_row_bnds(lp, global_row_idx, GLP_LO, 1.0, 0.0);
 
-    std::vector<int> indices;
-    std::vector<double> coeficientes;
+    vector<int> indices;
+    vector<double> coeficientes;
 
-    for (const auto &kv : X_indices)
+    for (const auto &kv : X_index)
     {
         int var_index = kv.second;
         indices.push_back(var_index);
         coeficientes.push_back(1.0);
     }
-    // Aplicar la restricción global con todos los índices y coeficientes de las X
     glp_set_mat_row(lp, global_row_idx, indices.size() - 1, indices.data(), coeficientes.data());
 
-    // Esto es para garantizar la igualdad
-
-    // int global_row_idx1 = glp_add_rows(lp, 1);
-    // glp_set_row_bnds(lp, global_row_idx1, GLP_UP, 0.0, 1.0); // Configura el límite superior como 1.0
-
-    // std::vector<int> indices2;
-    // std::vector<double> coeficientes2;
-
-    // for (const auto &kv : X_indices)
-    // {
-    //     int var_index = kv.second;
-    //     indices2.push_back(var_index);
-    //     coeficientes2.push_back(1.0);
-    // }
-
-    // Aplicar la restricción global con todos los índices y coeficientes de las X
-    // glp_set_mat_row(lp, global_row_idx1, indices2.size() - 1, indices2.data(), coeficientes2.data());
-
     // Restriccion de capacidad
-
-    for (int r = 0; r < n_r; ++r)
+    if (cvrp)
     {
-        // Crear una nueva restricción para la capacidad de la ruta `r`
-        int row_idx = glp_add_rows(lp, 1);
-        glp_set_row_bnds(lp, row_idx, GLP_UP, 0.0, capacity); // La demanda total no debe exceder la capacidad
-
-        vector<int> indicesc;
-        vector<double> coeficientesc;
-
-        for (const auto &kv : X_indices)
+        for (int r = 0; r < n_r; ++r)
         {
-            int r1 = get<0>(kv.first); // Ruta `r` desde la que se selecciona la subruta
-            int j1 = get<1>(kv.first); // Primer cliente de la subruta
-            int j2 = get<2>(kv.first); // Último cliente de la subruta
+            int row_idx = glp_add_rows(lp, 1);
+            glp_set_row_bnds(lp, row_idx, GLP_UP, 0.0, capacity); // La demanda total no debe exceder la capacidad
 
-            if (r1 == r)
+            vector<int> indicesc;
+            vector<double> coeficientesc;
+
+            for (const auto &kv : X_index)
             {
-                int var_index = kv.second;
+                int r1 = get<0>(kv.first);
+                int j1 = get<1>(kv.first);
+                int j2 = get<2>(kv.first);
 
-                // Suma la demanda de los clientes de `j1` a `j2`
-                double demanda_total = D[{r1, j1, j2}] + route_demand[r];
-                indicesc.push_back(var_index);
-                coeficientesc.push_back(demanda_total); // Coeficiente de demanda total de la subruta
+                if (r1 == r)
+                {
+                    int var_index = kv.second;
+
+                    double demanda_total = D[{r1, j1, j2}] + route_demand[r];
+                    indicesc.push_back(var_index);
+                    coeficientesc.push_back(demanda_total);
+                }
             }
+            glp_set_mat_row(lp, row_idx, indicesc.size() - 1, indicesc.data(), coeficientesc.data());
         }
-
-        // Aplica la restricción para que la suma de demandas no exceda la capacidad del vehículo
-        glp_set_mat_row(lp, row_idx, indicesc.size() - 1, indicesc.data(), coeficientesc.data());
     }
 
-    glp_simplex(lp, NULL); // Resolución usando el método simplex
+    glp_simplex(lp, NULL);
 
     if (glp_get_status(lp) == GLP_OPT)
     {
-        std::cout << "Solución óptima encontrada." << std::endl;
+        cout << "Solución óptima encontrada." << endl;
 
         double obj_value = glp_get_obj_val(lp);
-        std::cout << "Valor de la función objetivo: " << obj_value << std::endl;
+        cout << "Valor de la función objetivo: " << obj_value << endl;
 
-        for (int var = 1; var <= X_indices.size(); var++)
+        for (int var = 1; var <= X_index.size(); var++)
         {
             double value = glp_get_col_prim(lp, var);
             if (value > 0.0001)
             {
-                std::cout << "Valor de X[" << var << "] = " << value << std::endl;
+                cout << "Valor de X[" << var << "] = " << value << endl;
             }
         }
     }
     else
     {
-        std::cout << "No se encontró una solución óptima." << std::endl;
+        cout << "No se encontró una solución óptima." << endl;
     }
 
     glp_delete_prob(lp);
