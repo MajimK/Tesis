@@ -1,0 +1,136 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{tcolorbox}
+\usepackage{subcaption}
+\usepackage[spanish]{babel}
+\usepackage{lipsum}
+
+\begin{document}
+
+\section {Representación del problema como un Grafo}
+
+En esta sección, se estructura el problema de enrutamiento de vehículos capacitado como un grafo dirigido y ponderado. Este enfoque permite modelar las relaciones y restricciones del problema mediante nodos, aristas y ciclos, facilitando así la optimización de rutas bajo las limitaciones de capacidad.\cite{ref1}
+
+\begin{enumerate}
+
+\item \textbf{Arcos ($i$, $j$):} Los arcos, representados como $i$ y $j$, se expresan mediante pares ordenados de nodos tales que $j = <j_s, j_e>$, donde $j_s$ es el nodo de inicio y $j_e$ el nodo final del arco $j$. Esta estructura permite representar la dirección y el flujo en el recorrido entre nodos, facilitando el análisis de conectividad y secuencia en cada ruta. Cada arco posee una ponderación que representa la distancia entre el nodo inicio y el  nodo final.
+
+\item \textbf{Grafo Dirigido y Ponderado ($G={V,E}$):} Definimos $G$ como un grafo dirigido y ponderado que representa el sistema de clientes y conexiones entre ellos. Se destacan las siguientes características de $G$: 
+
+\begin{itemize}
+
+ \item \textbf{Nodos ($v$):} Cada nodo $v \in V$ representa a un cliente del sistema, mientras que el nodo especial $v_0$ corresponde al depósito central del sistema de enrutamiento. Este nodo actúa como punto de inicio y fin de cada ruta de servicio. 
+
+\item \textbf{Conectividad y Rutas ($r$):} El grafo $G$ es conexo, lo que asegura que todos los nodos son accesibles desde el nodo $v_0$ y forman ciclos que comienzan y terminan en él. Al eliminar $v_0$, el grafo se descompone en varias componentes conexas, cada una de las cuales corresponde a una Ruta (r) independiente. Cada ruta puede ser enumerada para permitir su identificación individual y análisis en el modelo. 
+\end{itemize}
+
+\item \textbf{Orden y Secuencialidad:} Se puede establecer un orden entre los arcos definiendo que $i<j$ si $i$ aparece primero que $j$ en una ruta, partiendo desde el nodo especial $v_0$ o deposito
+
+\end{enumerate}
+\section {Modelo X}
+
+\subsection{Subrutas}
+
+Dado un par de arcos $j_1$,$j_2$, estos pueden definir una \textit{subruta} si se encuentran en secuencia dentro de una ruta $r$. Es decir si $j_1$ precede a $j_2$ ($j_1 < j_2$) en la ruta. La subruta definida es la comprendida entre estos dos arcos, excluyendo a los mismos.\\
+Por ejemplo si definimos una ruta $r= (v_0, v_1, v_2, v_3, v_0)$, los arcos $j_1 = <v_0,v_1>$ y $j_2 = <v_2,v_3>$ definen una subruta en $r$, la cual es la secuencia de nodos $(v_1,v_2)$
+
+\subsection {Variables del sistema}
+
+\begin{enumerate}
+\item
+$
+ X_{r_1 j_1 j_2 r_2 i}= 
+\begin{cases}  
+    1 & \text{si eliminamos la subruta definida por los arcos $j_1,j_2$ de $r_1$} \\
+       & \text{y la insertamos en el arco $i$ de $r_2$}\\
+    0 & \text{si no } 
+\end{cases}
+$
+\end{enumerate}
+
+\subsection {Parámetros del modelo}
+
+\begin{enumerate}
+\item{$capacity$: Representa la capacidad de cada vehículo. La demanda de una ruta no puede exceder la capacidad de un vehiculo.}
+\item{$c_{rj}$: Representa el peso del arco $j$ en la ruta $r$. Este parámetro representa la función de ponderación de los arcos del grafo $G$}
+
+\item{$S_{rj_1j_2}$: Define la suma de los pesos que poseen los nodos de la subruta definida por los arcos de los arcos $j_1$ y $j_2$ de la ruta $r$, es decir:}
+
+\[
+S_{rij_1}=\sum\limits_{i=j_1+1}^{j_2-1} c_{ri} 
+\]
+Este parámetro es el que acumula el peso total de la subruta, cuando se poseen mas de dos nodos.
+
+\item {$D_{rj_1j_2}$: Este parámetro define la suma de las demandas que poseen los vértices de la subruta definida por los arcos $j_1$ y $j_2$ de la ruta $r$ como sigue:}
+
+\[
+D_{rj_1j_2}=\sum\limits_{i=j_1+1}^{j_2-1} d_{i_e} 
+\]
+
+Donde $d_{i_e}$ representa la demanda del cliente final de la arista $i$ \\($i = <i_s,i_e>$).
+
+\item{$K_{r_1ir_2j}$:Representa el peso del arco $<j_s,i_e>$ donde el arco $i$ se encuentra en la ruta $r_1$ y el arco $j$ en la ruta $r_2$}.
+\item{$L_{r_1ir_2j}$: Representa el peso del arco $<i_s,j_e>$ donde el arco $i$ se encuentra en la ruta $r_1$ y el arco  $j$ en la ruta $r_2$}.\\
+Estos dos parámetros son esenciales tanto en la inserción como en la eliminación de subrutas dentro de cada ruta correspondiente, permitiendo la conexión de los nodos que se quedan al eliminar la subruta y los extremos de esta con los extremos del arco $i$
+
+\item{$P_r$: Es el peso total de la ruta $r$ para una solución dada. Se calcula como la suma de los pesos de los arcos en la ruta:}
+  \[
+P_r=\sum\limits_{j=1}^{n} c_{rj}  
+\]
+
+\item{$RouteDemand_r$: Es la demanda total de la ruta $r$ para una solución dada. se calcula como sigue:}
+\[
+RouteDemand_r = \sum\limits_{j=0}^{n-1} d_{i_e}
+\] 
+
+\item {$Eliminar$: Este parámetro modela el coste asociado con la eliminación de una subruta especifica de la ruta $r1$ e inserción en otra ruta $r2$}
+\[
+Eliminar=\sum\limits_{r_1=1}^{n_{r}} \sum\limits_{j_1=1}^{n_{j_1}}\sum\limits_{j_2=1}^{n_{j_2}}\sum\limits_{r_2=1}^{n_{r}}\sum\limits_{i=1}^{n_i} X_{{r_1}{j_1}{j_2}{r_2}{i}}*(P_{r_1}-S_{{r_1}{j_1}{j_2}}-c_{{r_1}{j_1}}-c_{{r_1}{j_2}}+L_{{r_1}{j_1}{r_1}{j_2}})
+\]
+\item {$Sumar$: Este parámetro modela el coste asociado con la adición de una subruta en una nueva posición dentro de la ruta $r_2$}
+ \[
+Sumar=\sum\limits_{r_1=1}^{n_{r}} \sum\limits_{j_1=1}^{n_{j_1}}\sum\limits_{j_2=1}^{n_{j_2}}\sum\limits_{r_2=1}^{n_{r}}\sum\limits_{i=1}^{n_i} X_{{r_1}{j_1}{j_2}{r_2}{i}}*(P_{r_2} - c_{{r_2}{i}} + S_{{r_1}{j_1}{j_2}}+K_{{r_1}{j_1}{r_2}{i}} + L_{{r_1}{j_2}{r_2}{i}}) 
+\] 
+\end{enumerate}
+
+Los parámetros presentados anteriormente han sido definidos para capturar tanto los atributos individuales de cada ruta y arco, como las interacciones resultantes de la manipulación de subrutas. Cada parámetro contribuye a la representación de los costos de eliminación e inserción de subrutas, lo que permite evaluar y optimizar las posibles configuraciones de rutas en términos de peso total y demanda. Estos cálculos previos facilitan la implementación eficiente del modelo en problemas de enrutamiento de vehículos, asegurando que cada modificación de las rutas sea valorada en función de su impacto en el sistema global.
+
+\subsection{El modelo}
+\subsubsection{Función Objetivo}
+El propósito del modelo es minimizar el costo total resultante de las operaciones de modificación en las rutas actuales. Este costo total incluye tanto el costo de eliminar subrutas de una ruta original como el costo de insertar estas subrutas en una ruta diferente. La función objetivo se define como:
+\[
+f(x) =( \sum \limits_{r \neq r1,r2 \in Eliminar,Sumar} P + Eliminar + Sumar) \cdot penalty
+\]
+
+En la ecuación anterior $penalty$ es un factor de penalidad, que se proporciona a la función objetivo cuando la solución en la que nos encontramos es infactible (no cumple la restricción de capacidad en el caso del CVRP) que se define como:
+
+\[
+penalty = 
+\begin{cases}
+    10 000 \cdot  (D_{rj_1j_2} + RouteDemand - capacity) & \text{Si al insertar la subruta, la solución es infactible} \\
+    10 000 \cdot (RouteDemand - D_{rj_1j_2} - capacity) & \text{Si al eliminar la subruta, la solución continua siendo infactible}\\
+    1 & \text{Si la solución es factible} 
+\end{cases}
+\]
+
+\subsubsection{Restricciones}
+
+
+\begin{enumerate}
+\item {Para asegurar la coherencia en las rutas, los arcos $j_1$ y $j_2$ en una subruta deben aparecer en secuencia, es decir, si $X_{r_1j_1j_2r_2i}=1$, entonces $j_1 < j_2$ en $r_1$:}
+\[
+j_1 < j_2 \forall (j_1,j_2) \text{en} r_1
+\]
+
+\item{$ \sum \limits_{r_1j_1j_2r_2i} X_{{r_1}{j_1}{j_2}{r_2}{i}} = 1 $}\\
+Esta restricción implica que el valor de $X_{{r_1}{j_1}{j_2}{r_2}{i}}$ debe ser 1 únicamente para una combinación de índices (es decir, de rutas y arcos) en el conjunto permitido por el modelo. En términos prácticos, esto asegura que cualquier subruta definida entre dos arcos específicos $j_1$ y $j_2$ de la ruta $r_1$, solo pueda ser eliminada e insertada una vez en cada iteración del proceso de optimización, evitando duplicados.
+\end{enumerate}
+
+\bibliographystyle{plain}
+\bibliography{references} 
+
+
+\end{document}
