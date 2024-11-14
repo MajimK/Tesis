@@ -11,7 +11,6 @@ for item in list:
     item = item.replace("                                       ","")
     item=item.replace("(","{")
     item=item.replace(")","},")
-    item=item.replace("\t","")
     item=item.replace(" ",",")
     with open(path2,'a') as file:
         file.write(item)

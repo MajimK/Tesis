@@ -4,6 +4,19 @@
         "xstring": "cpp",
         "vector": "cpp",
         "iostream": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "string": "cpp",
+        "iosfwd": "cpp",
+        "utility": "cpp",
+        "format": "cpp",
+        "istream": "cpp",
+        "memory": "cpp",
+        "type_traits": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xlocnum": "cpp",
+        "xloctime": "cpp",
+        "xutility": "cpp",
+        "ostream": "cpp"
     }
 }
