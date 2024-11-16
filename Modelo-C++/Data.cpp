@@ -4,6 +4,7 @@
 #include <map>
 #include <tuple>
 #include <fstream>
+#include <random>
 
 using namespace std;
 
@@ -70,22 +71,22 @@ public:
         string save = " ";
         data_to_save.push_back(save);
     }
-    void createJson(const string &FileName)
+    void createJson(const string &FileName, int i)
     {
         charge_sol();
         ofstream file(FileName, ios::app);
         string savejson = "";
-        savejson = exportJson();
+        savejson = exportJson(i);
         file << savejson;
         file.close();
     }
 
 private:
-    string exportJson()
+    string exportJson(int i)
     {
         string save = "";
 
-        save += "\"data" + to_string(count) + "\":\n";
+        save += "\"data" + to_string(i) + "\":\n";
         save += "{\n";
         save += "\"solution\": \"" + data_to_save[0] + "\",\n";
         save += "\"demand\": \"" + data_to_save[1] + "\",\n";
