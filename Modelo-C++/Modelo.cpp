@@ -31,8 +31,15 @@ public:
     void print_graph()
     {
         for (auto &bridge : bridges)
+        {
             cout << bridge.first << " -> " << bridge.second << endl;
+        }
         int total_cost = 0;
+        for (auto &route : route_cost)
+        {
+            total_cost += route.second;
+        }
+
         cout << "Weight: " << total_cost << endl;
     }
     void apply_criteria(const tuple<int, int, int, int, int> &key)
