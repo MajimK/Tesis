@@ -12,25 +12,36 @@ using namespace std;
 class Generate_Problems
 {
 private:
+    // Lo lei en un paper y me parecio buena idea hacerlo
+    // Total_demand es la suma de las demandas de cada cliente
+    // Desire_routes es la cantidad de rutas deseadas
+    void capacity_calculate(int total_demand, int desire_routes)
+    {
+        capacity = (int)(desire_routes * (total_demand / (weight.size() - 1)));
+        cout << capacity << endl;
+    }
+
 public:
     vector<vector<int>> weight;
     vector<vector<int>> solution;
     vector<int> demand;
+    int capacity = 0;
 
     Generate_Problems()
     {
     }
 
-    void Create_Problem(int capacity, int max_demand)
+    void Create_Problem(int number_of_clients, int max_demand, int desire_routes)
     {
         random_device rd;  // Semilla aleatoria
         mt19937 gen(rd()); // Generador de números aleatorios
         uniform_int_distribution<> dis(1, 50);
         uniform_int_distribution<> disdemand(1, max_demand);
-        for (size_t i = 0; i < 36; i++)
+        int total_demand = 0;
+        for (size_t i = 0; i < number_of_clients + 1; i++)
         {
             vector<int> client_demand;
-            for (size_t j = 0; j < 36; j++)
+            for (size_t j = 0; j < number_of_clients + 1; j++)
             {
                 if (i == j)
                 {
@@ -49,10 +60,12 @@ public:
             else
             {
                 demand.push_back(disdemand(gen));
+                total_demand += demand[demand.size() - 1];
             }
         }
+        capacity_calculate(total_demand, desire_routes);
         vector<int> clients;
-        for (size_t i = 1; i < 36; i++)
+        for (size_t i = 1; i < number_of_clients + 1; i++)
         {
             clients.push_back(i);
         }
