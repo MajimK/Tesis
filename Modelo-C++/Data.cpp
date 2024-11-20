@@ -4,7 +4,6 @@
 #include <map>
 #include <tuple>
 #include <fstream>
-#include <random>
 
 using namespace std;
 
@@ -12,6 +11,8 @@ class Data
 {
 public:
     // solution vector<vector<int>> -> vector<int>
+    // capacity_route
+    // weigth_route
     // demand vector<int>
     // capacity vector<int>
     // neighborhood
@@ -20,6 +21,8 @@ public:
 
     vector<string> data_to_save;
     vector<string> sol_save;
+    vector<string> capacity_route;
+    vector<string> weigth_route;
     vector<string> region_save;
 
     int count = 0;
@@ -61,15 +64,10 @@ public:
         save += "r2 = " + to_string(get<3>(neigh)) + ",";
         save_region += "r2 = " + to_string(get<3>(neigh)) + ",";
         save += "i = " + to_string(get<4>(neigh)) + ",";
-        save += "]\",\n";
-        save_region += "]\",\n";
+        save += "]\"\n";
+        save_region += "]\"\n";
         sol_save.push_back(save);
         region_save.push_back(save_region);
-    }
-    void AddNeighborhoodCount()
-    {
-        string save = " ";
-        data_to_save.push_back(save);
     }
     void createJson(const string &FileName, int i)
     {
@@ -90,12 +88,11 @@ private:
         save += "{\n";
         save += "\"solution\": \"" + data_to_save[0] + "\",\n";
         save += "\"demand\": \"" + data_to_save[1] + "\",\n";
-        save += "\"capacity\": \"" + data_to_save[2] + "\",\n";
-        save += "\"neighborhood\": \"" + data_to_save[3] + "\",\n";
+        save += "\"weight\": \"" + data_to_save[2] + "\",\n";
         save += "\"best_solutions\": [\n";
-        save += data_to_save[4] + "],\n";
+        save += data_to_save[3] + "],\n";
         save += "\"regions\": [\n";
-        save += data_to_save[5] + "]\n";
+        save += data_to_save[4] + "]\n";
         save += "},\n";
         return save;
     }
