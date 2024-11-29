@@ -14,5 +14,5 @@ Para correrlo:
     g++ X.cpp -o X -lglpk
 ```
 ```bash
-    \.X.exe
+    .\X.exe
 ```
