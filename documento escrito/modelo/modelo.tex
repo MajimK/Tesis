@@ -1,0 +1,207 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{tcolorbox}
+\usepackage{subcaption}
+\usepackage[spanish]{babel}
+\usepackage{lipsum}
+
+\begin{document}
+
+\section {Representación del problema como un Grafo}
+
+En esta sección, se estructura el problema de enrutamiento de veh´ıculos capacitado (CVRP por sus siglas en inglés ) como un grafo dirigido y ponderado. Este enfoque permite modelar las relaciones y restricciones del problema mediante nodos, aristas y ciclos, facilitando así la optimización de rutas bajo las limitaciones de capacidad.[.\cite{ref1}
+
+\textbf{Grafo Dirigido y Ponderado $(G = V,E)$:} Definimos $G$ comoo un grafo dirigido y ponderado que representa el sistema de clientes y conexiones entre ello. se destacan las siguientes características de $G$:
+
+\begin{itemize}
+    \item \textbf{Nodos ($v$):} Cada vértice $v \in V$ representa a un cliente del sistema, mientras que el vértice especial $v_0$ corresponde al depósito central del sistema de enrutamiento. Este nodo actúa como punto de inicio y fin de cada ruta de servicio.
+    
+    \item \textbf{Arcos ($i, j$):} Los arcos se expresan mediante pares ordenados de nodos tales que $j = \langle j_s, j_e \rangle$, donde $j_s$ es el nodo de inicio y $j_e$ el nodo final del arco $j$. Cada arco posee una ponderación que representa la distancia entre el nodo inicio y el nodo final.
+    
+    \item \textbf{Conectividad y Rutas ($r$):} El grafo $G$ es conexo, lo que asegura que todos los vértices son accesibles desde el nodo $v_0$ y forman ciclos que comienzan y terminan en él. Al eliminar $v_0$, el grafo se descompone en varias componentes conexas, cada una de las cuales corresponde a una Ruta ($r$) independiente.
+    
+    \item \textbf{Orden y Secuencialidad:} Para establecer una relación de orden entre los arcos, los mismos se enumeran de 0 a $n$ siendo $n$ la cantidad de clientes en la ruta. El arco 0 es el que parte del depósito al primer vértice y el $n$ va desde el último cliente de la ruta hacia el depósito. Para dos arcos $i,j$, si $i < j$ entonces $i$ aparece primero en el recorrido de la ruta $r$ que $j$.
+\end{itemize}
+
+Para ilustrar esta conversión, mostramos una posible solución al CVRP con dos rutas y 5 clientes (ver Figura~\ref{fig:solucion-cvrp}), y su representación como un grafo (Figura~\ref{fig:grafo-cvrp}).
+
+\begin{figure}[h!]
+$R1: 1,2,3$\\
+$R2: 4,5$
+    \caption{Solución para un CVRP con 5 clientes y 2 vehículos.}
+    \label{fig:solucion-cvrp}
+\end{figure}
+
+\begin{figure}[h!]
+$0 \overset{0}{\rightarrow}1 \overset{1}{\rightarrow}2 \overset{2}{\rightarrow}3 \overset{3}{\rightarrow}0$\\
+$0 \overset{0}{\rightarrow}4 \overset{1}{\rightarrow}5 \overset{2}{\rightarrow}0$
+
+    \caption{Representación como grafo.}
+    \label{fig:grafo-cvrp}
+\end{figure}
+
+En la representación gráfica, los nodos son los clientes y el depósito, mientras que los arcos indican las conexiones entre ellos con sus respectivas direcciones y pesos. Por ejemplo, en la Ruta 1, si tomamos los arcos $(1, 2)$ y $(3, 0)$, queda claro que $(1, 2)$ aparece antes porque conecta al cliente $1$ con el cliente $2$, mientras que $(3, 0)$ cierra el ciclo al regresar al depósito.
+
+\section {Modelo X}
+\subsection {Subrutas}
+Una subruta se define como una secuencia continua de clientes dentro de una misma ruta. Estas subrutas están delimitadas por dos arcos, $j_1$ y $j_2$, lo que significa que la subruta comienza en el cliente siguiente a $j_1$ y termina en el cliente correspondiente a $j_2$. Por ejemplo, en el grafo representado en la figura [\ref{fig:graph-to-solution-1}], es posible identificar subrutas como las que se muestran en la figura [\ref{fig:subroutes-examples}]
+
+\begin{figure}[h!]
+$1 \rightarrow2$\\
+$4$\\
+$1 \rightarrow2 \rightarrow3 $
+    \caption{Subrutas del grafo de la Figura~\ref{fig:grafo-cvrp}.}
+    \label{fig:subrutas-cvrp}
+\end{figure}
+
+
+\subsection {Variables y parametros}
+Para modelar matemáticamente el problema, se utilizan variables binarias, denotadas como $X_{r_1 j_1 j_2 r_2 i}$. Estas variables indican si una subruta específica es seleccionada y reubicada en otra ruta. En términos simples, $X_{r_1 j_1 j_2 r_2 i}$ toma el valor de:
+\[
+ X_{r_1 j_1 j_2 r_2 i}= 
+\begin{cases}  
+    1 & \text{si movemos la subruta desde el cliente $j_1 +1 $ hasta $j_2$ de $r_1$} \\
+       & \text{insertandola entre los clientes $i$ y $i+1$ de $r_2$}\\
+    0 & \text{en caso contrario} 
+\end{cases}
+\]
+Para ilustrar cómo funcionan estas variables, consideremos el grafo mostrado en la figura [\ref{fig:variables_example}]. Este grafo incluye dos rutas y cinco clientes. A continuación, dos ejemplos de variables:
+\begin{itemize}
+\item
+$X_{2,0,1,1,1}$: Indica que la subruta que comienza en el cliente $1$ y termina en el cliente $2$ (de la ruta $r_2$) será insertada después del cliente $1$ en la ruta $r_1$.
+\item
+$X_{1,1,3,2,2}$: Muestra que la subruta que incluye a los clientes $2, 3$ y $4$ (de la ruta $r_1$) será colocada después del cliente $2$ en la ruta $r_2$.
+\end{itemize}
+
+\begin{figure}[h!]
+    \vspace{0.5em}
+$r_1:  0 \rightarrow 1\rightarrow 4 \rightarrow 5 \rightarrow 0$\\
+$r_2:  0\rightarrow 2\rightarrow 3\rightarrow 0$\\
+$X_{2,0,1,1,1}$\\
+$X_{1,1,3,2,2}$\\
+\caption{Ejemplos de variables}
+\label{fig:variables_example}
+\end{figure}
+
+\begin{figure}[h!]
+    \vspace{0.5em}
+\begin{enumerate}
+\item
+$r_1:  0 \rightarrow 1\rightarrow 2\rightarrow 4 \rightarrow 5 \rightarrow 0$\\
+$r_2:  0\rightarrow 3\rightarrow 0$\\
+\item
+$r_1:  0 \rightarrow 1 \rightarrow 0$\\
+$r_2:  0\rightarrow 2\rightarrow 3 \rightarrow 4 \rightarrow 5\rightarrow 0$\\
+\end{enumerate}
+\caption{Transformacion}
+\label{fig:transformation}
+\end{figure}
+Los efectos de estas operaciones se muestran en la figura [\ref{fig:transformation}]. En esta figura, se observa cómo cambian las rutas originales al aplicar los valores de las variables:
+
+Además de las variables binarias descritas anteriormente, el modelo utiliza una serie de parámetros que permiten evaluar las características de las rutas y los efectos de las manipulaciones de subrutas. Estos parámetros son esenciales para cuantificar los costos, demandas y conexiones dentro del grafo de solución. A continuación, se presentan los principales parámetros utilizados:
+
+\begin{enumerate}
+\item{$capacity$: Representa la capacidad máxima de cada vehículo. La demanda total de cualquier ruta no puede exceder este límite.}
+\item{$c_{rj}$: Indica el peso del arco $j$ en la ruta $r$. Este parámetro refleja la función de ponderación asignada a los arcos del grafo $G$.}
+
+\item{$S_{rj_1j_2}$:Define el peso total de una subruta comprendida entre los clientes $j_1+1$ y $j_2$. Se calcula mediante:}
+
+\[
+S_{rij_1}=\sum\limits_{i=j_1+1}^{j_2-1} c_{ri} 
+\]
+\begin{itemize}
+\item
+Si la subruta contiene solo un cliente, este parámetro es igual a 0.
+\item
+Si la subruta incluye todos los clientes de una ruta, el valor de $S_{rj_1j_2}$ es igual al peso total de la ruta menos el costo de entrada y salida del depósito.
+\end{itemize}
+
+\item {$D_{rj_1j_2}$: Representa la demanda total de la subruta desde el cliente $j_1+1$ hasta $j_2$. Se define como:}
+
+\[
+D_{rj_1j_2}=\sum\limits_{i=j_1+1}^{j_2-1} d_{i_e} 
+\]
+
+Aquí, $d_{i_e}$ es la demanda del cliente final de la arista $i$, donde $i = \langle i_s, i_e \rangle$.
+
+\item{$K_{r_1ir_2j}$:Representa el peso del arco $\langle i+1, j \rangle$, donde $i$ pertenece a la ruta $r_1$ y $j$ pertenece a la ruta $r_2$.}
+\item{$L_{r_1ir_2j}$: Representa el peso del arco $\langle i, j+1 \rangle$, con los mismos conjuntos de clientes que $K_{r_1ir_2j}$.}\\
+
+Estos dos parámetros ($K$ y $L$) son fundamentales para evaluar las operaciones de inserción y eliminación de subrutas. Permiten conectar los nodos restantes al eliminar una subruta, así como los extremos de la subruta con los clientes correspondientes. En la figura [\ref{fig:parameter graph}], se muestra un ejemplo de grafo solución, mientras que en la figura [\ref{fig:K-L examples}] se ilustran visualmente estos parámetros.
+
+\begin{figure}[h!] \vspace{0.5em} $r_1: 0 \overset{5}{\rightarrow} 1\overset{8}{\rightarrow} 2\overset{3}{\rightarrow} 3\overset{6}{\rightarrow} 0$\\
+$r_2: 0\overset{1}{\rightarrow} 4\overset{2}{\rightarrow} 5\overset{9}{\rightarrow} 0$
+\caption{Representación como grafo} 
+\label{fig:parameter graph} 
+\end{figure}
+
+\begin{figure}[h!] 
+\vspace{0.5em} 
+\begin{enumerate} 
+\item $1 \overset{1}{\rightarrow} 5 $ 
+\item $5 \overset{2}{\rightarrow} 3 $ 
+\end{enumerate} 
+\caption{a-) $L_{1,1,2,1}$; b-) $K_{2,1,1,3}$}
+ \label{fig:K-L examples} \end{figure}
+
+\item{$P_r$: Representa el peso total de la ruta $r$ para una solución dada. Este se calcula como la suma de los pesos de todos los arcos de la ruta:}
+  \[
+P_r=\sum\limits_{j=1}^{n} c_{rj}  
+\]
+
+\item{$RouteDemand_r$: Define la demanda total de la ruta $r$ en una solución dada. Se obtiene mediante:}
+\[
+RouteDemand_r = \sum\limits_{j=0}^{n-1} d_{i_e}
+\] 
+
+\end{enumerate}
+
+Los parámetros descritos no solo capturan las características individuales de las rutas y arcos, sino que también permiten evaluar el impacto de las operaciones de eliminación e inserción de subrutas. Esto facilita la identificación de configuraciones óptimas de rutas en términos de peso total y demanda. Además, al precomputar estos valores, se mejora la eficiencia de la implementación del modelo en problemas de enrutamiento de vehículos, asegurando que las modificaciones sean valoradas adecuadamente en el contexto del sistema global.
+
+\subsection{El modelo}
+El modelo tiene como objetivo minimizar el costo total asociado con las operaciones de modificación de las rutas actuales. Este costo incluye tanto el costo de eliminar subrutas de una ruta original como el costo de insertar estas subrutas en otra ruta diferente. Para capturar esto, se definen las siguientes componentes clave:
+
+\begin{itemize}
+\item {$Eliminar$: Este parámetro modela el coste asociado con la eliminación de una subruta especifica de la ruta $r1$ e inserción en otra ruta $r2$}
+\[
+Eliminar=\sum X_{{r_1}{j_1}{j_2}{r_2}{i}}*(P_{r_1}-S_{{r_1}{j_1}{j_2}}-c_{{r_1}{j_1}}-c_{{r_1}{j_2}}+L_{{r_1}{j_1}{r_1}{j_2}})
+\]
+\item {$Sumar$: Este parámetro modela el coste asociado con la adición de una subruta en una nueva posición dentro de la ruta $r_2$}
+ \[
+Sumar=\sum  X_{{r_1}{j_1}{j_2}{r_2}{i}}*(P_{r_2} - c_{{r_2}{i}} + S_{{r_1}{j_1}{j_2}}+K_{{r_1}{j_1}{r_2}{i}} + L_{{r_1}{j_2}{r_2}{i}}) 
+\] 
+\end{itemize}
+Con estas componentes, el modelo matemático se formula como:
+\begin{equation}
+\min \sum \limits_{r \neq r1,r2 \in Eliminar,Sumar} P + Eliminar + Sumar + penalty
+\end{equation}
+Sujeto a:
+\begin{equation}
+\sum \limits_{r_1j_1j_2r_2i} X_{{r_1}{j_1}{j_2}{r_2}{i}} = 1 
+\end{equation}
+\begin{equation}
+j_1 < j_2 \hspace{10 pt} \forall (j_1,j_2) \text{ en } r_1
+\end{equation}
+En la ecuación (1), $penalty$ es un factor de penalidad, que se le aplica a la función objetivo cuando la solución en la que nos encontramos es infactible, es decir no cumple la restricción de capacidad en el caso del CVRP la cual se define como:
+\begin{equation}
+\sum \limits_{i=1}^{n} d_i < capacity
+\end{equation}
+Por tanto, al penalizar a la función objetivo, aseguramos que soluciones infactibles, no puedan ser solución de nuestro modelo, de esta manera simplificamos las restricciones del mismo. El parametro $penalty$ lo definimos como:
+\[
+penalty = 
+\begin{cases}
+    10 000 \cdot  (D_{rj_1j_2} + RouteDemand - capacity) & \text{Si al insertar la subruta, la solución es infactible} \\
+    10 000 \cdot (RouteDemand - D_{rj_1j_2} - capacity) & \text{Si al eliminar la subruta, la solución continua siendo infactible}\\
+    1 & \text{Si la solución es factible} 
+\end{cases}
+\]
+Este término asegura que las soluciones que no respeten las restricciones de capacidad sean penalizadas suficientemente en la función objetivo, favoreciendo así configuraciones factibles sin necesidad de imponer restricciones complejas adicionales.
+
+\bibliographystyle{plain}
+\bibliography{references} 
+
+
+\end{document}
