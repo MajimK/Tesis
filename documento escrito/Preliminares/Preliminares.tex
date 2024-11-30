@@ -45,6 +45,35 @@ Métodos de Solución
 Dada la complejidad del VRP y sus variantes, se han desarrollado múltiples enfoques para resolverlos. Los métodos exactos, como la programación lineal entera y el branch-and-bound, son efectivos para instancias pequeñas, pero su escalabilidad es limitada \cite{ref5}. En instancias más grandes, se emplean heurísticas y metaheurísticas como la búsqueda de vecindad variable (VNS), la búsqueda en vecindades amplias (LNS)\cite{ref4}, los algoritmos genéticos y la colonia de hormigas.\cite{ref7} Estas técnicas buscan un balance entre la exploración del espacio de soluciones y la explotación de las áreas más prometedoras.
 
 Los recientes avances incluyen el uso de métodos híbridos y técnicas basadas en aprendizaje automático para mejorar la eficiencia y robustez de los algoritmos. Además, la creación de conjuntos de datos de prueba más complejos y diversos, como los benchmarks de \cite{ref10}, ha permitido evaluar y comparar diferentes enfoques de manera más rigurosa, impulsando el progreso en el campo.
+
+\subsection{Criterios de vecindad}
+
+En el contexto del Vehicle Routing Problem (VRP) y sus variantes, los criterios de vecindad juegan un papel fundamental dentro de los algoritmos de búsqueda local y metaheurísticas. Estos criterios definen cómo se generan y exploran las soluciones vecinas a una solución actual, permitiendo mejorarla gradualmente o escapar de óptimos locales. En esencia, un criterio de vecindad establece las reglas mediante las cuales se modifica una solución, y la elección de criterios adecuados es crucial para la eficacia de los métodos de optimización.
+Ejemplos de Criterios de Vecindad
+\begin{enumerate}
+\item
+    \textbf{Reubicación de un cliente (Relocation):}
+    Este criterio consiste en mover un cliente de una ruta a otra o a una posición diferente dentro de la misma ruta. Por ejemplo, un cliente puede ser reubicado para equilibrar las cargas de los vehículos o para reducir el costo de la ruta.
+\item
+    \textbf{Intercambio de clientes (Swap):}
+    En este caso, se intercambian dos clientes entre diferentes rutas o dentro de la misma ruta. Esto permite ajustar las rutas para optimizar la distancia total recorrida o cumplir restricciones específicas, como las de capacidad o tiempo.
+\item
+    \textbf{Intercambio de secuencias (2-opt y 3-opt):}
+    Estos criterios implican modificar subrutas intercambiando dos o tres aristas, respectivamente. Por ejemplo, en un movimiento 2-opt, se eliminan dos aristas de la solución actual y se reconectan los nodos para formar una ruta diferente. Este tipo de criterio es común en problemas como el TSP y se adapta bien al VRP para minimizar la distancia total.
+\item
+    \textbf{Inserción de clientes (Insertion):}
+    Este criterio selecciona un cliente que no está incluido en la solución actual o que ha sido eliminado temporalmente, y lo inserta en una posición que minimice el costo de la ruta. Este enfoque es particularmente útil en heurísticas constructivas y métodos como la Búsqueda en Vecindades Amplias (LNS).
+\item
+    \textbf{Intercambio múltiple (Generalized Swap):}
+    Extiende el concepto de intercambio a grupos de clientes. Por ejemplo, se pueden intercambiar secuencias completas de clientes entre rutas para explorar vecindarios más amplios.
+\end{enumerate}
+
+\subsubsection{Importancia de los Criterios de Vecindad}
+
+Los criterios de vecindad son esenciales para equilibrar la intensificación y la diversificación en la búsqueda. La intensificación se enfoca en explorar soluciones cercanas para mejorar la calidad local, mientras que la diversificación permite moverse a regiones distantes del espacio de soluciones para evitar quedarse atrapado en óptimos locales. Técnicas como la Búsqueda de Vecindad Variable (VNS) aprovechan conjuntos de criterios de vecindad para cambiar sistemáticamente entre diferentes vecindarios, mejorando así la eficacia de la búsqueda.
+
+En el VRP, los criterios de vecindad también permiten incorporar restricciones específicas del problema, como ventanas de tiempo o capacidades de los vehículos, ajustando las operaciones de modificación para asegurar la factibilidad de las soluciones. Esto hace que sean una herramienta versátil y fundamental en la optimización combinatoria.
+
 \subsection{Busqueda en Vecindades Variables (VNS)}
 
 La Busqueda en Vecindades Variables (VNS) es una metaheurística de optimización introducida por Mladenović y Hansen en 1997, diseñada para resolver problemas de optimización combinatoria y global mediante la exploración sistemática de múltiples vecindarios en el espacio de soluciones. A diferencia de otros métodos de búsqueda local, que suelen trabajar con un único vecindario, VNS se basa en la idea de que cambiar dinámicamente entre diferentes estructuras de vecindad permite escapar de óptimos locales y explorar de manera más efectiva el espacio de soluciones. Este enfoque ha demostrado ser particularmente efectivo en problemas NP-duros, como el Vehicle Routing Problem (VRP) y sus variantes.
