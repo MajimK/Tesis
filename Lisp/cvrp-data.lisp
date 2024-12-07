@@ -112,10 +112,10 @@
                                         45 15 45 32 16 1 40 0)))
 
 (defparameter *cvrp-demands* '(12 16 5 8 3 13 18 8 1 13 18 18 13 16 5 18
-                                     18 17 17 13 1 11 18 14 11 8 18 2 3 12 10 7
-                                     16 12 3))
+                               18 17 17 13 1 11 18 14 11 8 18 2 3 12 10 7
+                               16 12 3))
 
-(defparameter *cvrp-capacity* 20)
+(defparameter *cvrp-capacity* 50)
 
 (defvar *cvrp-routes* '((1 2)	 ; Ruta 1
                         (3 4 5) ; Ruta 2
@@ -139,3 +139,4 @@
                         (32)    ; Ruta 20
                         (33 34) ; Ruta 21
                         (35)))
+11 2 18 2 3
