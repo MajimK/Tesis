@@ -30,10 +30,10 @@ public:
 
     void print_graph()
     {
-        for (auto &bridge : bridges)
-        {
-            cout << bridge.first << " -> " << bridge.second << endl;
-        }
+        // for (auto &item : route_cost)
+        // {
+        //     cout << get<0>(item) << " : " << get<1>(item) << endl;
+        // }
         int total_cost = 0;
         for (auto &route : route_cost)
         {
