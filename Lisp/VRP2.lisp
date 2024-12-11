@@ -11,7 +11,7 @@
 
 
 ; Ya arregle el cvrp-data.lisp
-
+(let ((start-time (get-internal-real-time)))
 (defparameter *best-sol1*
   (with-cvrp-problem (p1 :distances *cvrp-distances*
                          :demands *cvrp-demands*
@@ -19,24 +19,21 @@
 
 
 
-    (with-basic-cvrp-solution (s1 ((1 2)           ; Ruta 1
-                                   (3 4 5)      ; Ruta 2
-                                   (6 31)            ; Ruta 3
-                                   (7 8)          ; Ruta 4
-                                   (9)            ; Ruta 5
-                                   (10 11)        ; Ruta 6
-                                   (12)           ; Ruta 7
-                                   (13 14)        ; Ruta 8
-                                   (15)           ; Ruta 9
-                                   (16 17)        ; Ruta 10
-                                   (18)           ; Ruta 11
-                                   (19 20)        ; Ruta 12
-                                   (21 22)        ; Ruta 13
-                                   (23)           ; Ruta 14
-                                   (24)           ; Ruta 15
-                                   (25 26 27 28 29) ; Ruta 16
-                                   (30 32 33 34) ; Ruta 17
-                                   (35)) p1)
+    (with-basic-cvrp-solution (s1 ((34 12 25 2)
+(3 32)
+(33 8 31)
+(16)
+(10 18)
+(9 1)
+(23 27 15)
+(17)
+(11 19 4)
+(30 5 26 14)
+(21 35 24)
+(6)
+(29 22)
+(20 7)
+(28 13))p1)
 
       (let* ((wc (basic-working-copy s1))
 	     (ops-list nil)
@@ -100,7 +97,10 @@
         (clone best-ops-list)))))
       
 
-
+  (let ((end-time (get-internal-real-time)))
+    (format t "Tiempo transcurrido: ~a segundos~%"
+            (/ (- end-time start-time) ;; Diferencia en ticks
+               internal-time-units-per-second))))
 
 
 
