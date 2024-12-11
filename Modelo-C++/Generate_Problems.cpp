@@ -63,14 +63,16 @@ public:
                 total_demand += demand[demand.size() - 1];
             }
         }
+
         capacity_calculate(total_demand, desire_routes);
+
         vector<int> clients;
         for (size_t i = 1; i < number_of_clients + 1; i++)
         {
             clients.push_back(i);
         }
-
         shuffle(clients.begin(), clients.end(), gen);
+
         vector<int> present_route;
         int currentdemand = 0;
 
@@ -90,6 +92,55 @@ public:
                 currentdemand = demand[client];
             }
         }
+        if (present_route.size() != 0)
+        {
+            solution.push_back(present_route);
+        }
+    }
+    void Create_file_with_data()
+    {
+        string save_weight = "(";
+        string save_solution = "(";
+        string save_demand = "(";
+        for (const auto &clients : weight)
+        {
+            save_weight += "(";
+            for (const auto &client : clients)
+            {
+                save_weight += to_string(client) + " ";
+            }
+            save_weight.replace(save_weight.size() - 1, 1, ")");
+            save_weight += "\n";
+        }
+        save_weight += ")";
+
+        for (const auto &routes : solution)
+        {
+            save_solution += "(";
+            for (const auto &client : routes)
+            {
+                save_solution += to_string(client) + " ";
+            }
+            save_solution.replace(save_solution.size() - 1, 1, ")");
+            save_solution += "\n";
+        }
+        save_solution += ")";
+
+        for (const auto &client : demand)
+        {
+            if (client == 0)
+            {
+                continue;
+            }
+
+            save_demand += to_string(client) + " ";
+        }
+        save_demand += ")";
+
+        ofstream file("Data_to_lisp.txt", ios::app);
+        string save = save_weight + "\n\n" + save_demand + "\n\n" + save_solution + "\n\n" + to_string(capacity);
+        file << save;
+        file.close();
     }
 };
 
