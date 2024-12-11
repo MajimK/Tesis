@@ -11,82 +11,106 @@
 
 \begin{document}
 \section{Preliminares}
-\subsection{Problema de Enrutamiento de Vehiculos (VRP)}
-El Problema de Enrutamiento de Vehiculos (VRP) es uno de los problemas fundamentales en la optimización combinatoria, ampliamente estudiado por su importancia tanto práctica como teórica. Formulado por Dantzig y Ramser en 1959, el VRP consiste en diseñar rutas óptimas para una flota de vehículos que deben satisfacer la demanda de un conjunto de clientes dispersos geográficamente.\cite{ref2} Estos vehículos parten y regresan a uno o varios depósitos, con el objetivo de minimizar un criterio de costo, como la distancia total recorrida, el tiempo de operación o el consumo de recursos \cite{ref3}. El VRP tiene aplicaciones prácticas en áreas como la logística, el transporte urbano y la distribución de bienes en grandes cadenas de suministro.\cite{ref8,ref10,ref11}
+En este capitulo se presentan los elementos sobre los cuales se construye la presente investigación. En la sección 1.1 se presenta el Problema de Enrutamiento de Vehículos (VRP por sus siglas en ingles) asi como sus algunas de sus variantes. En la sección 1.2 y 1.3 se presentan conceptos relacionados con los criterios de vecindad y región de una vecindad, esenciales para la exploración de nuevas soluciones. En la sección 1.4 se introduce una metaheurística de búsqueda local, elemento de gran relevancia para el presente trabajo. Por último las secciones 1.5 y 1.6  se abordan los elementos de la biblioteca de software GLPK y el lenguaje de programación Lisp, ambas relevantes para el desarrollo de este trabajo. 
+\subsection{Problema de Enrutamiento de Vehículos (VRP)}
+El Problema de Enrutamiento de Vehículos (VRP) es uno de los problemas de optimización combinatoria,  más estudiado por su importancia tanto práctica como teórica. Formulado por Dantzig y Ramser en 1959, el VRP consiste en diseñar rutas óptimas para una flota de vehículos que deben satisfacer la demanda de un conjunto de clientes dispersos geográficamente \cite{ref2}. Estos vehículos parten y regresan a un depósito, con el objetivo de minimizar un criterio de costo, como la distancia total recorrida \cite{ref3}. El VRP tiene aplicaciones prácticas en áreas como la logística, el transporte urbano y la distribución de bienes en grandes cadenas de suministro \cite{ref8,ref10,ref11}.
 
-Una característica esencial del VRP es su clasificación como problema NP-duro, lo que significa que encontrar una solución óptima es computacionalmente intractable para instancias grandes. Por ello, en la práctica, se recurre a heurísticas y metaheurísticas para obtener soluciones aproximadas con alta calidad en tiempos razonables.\cite{ref7}
+Una característica esencial del VRP es su clasificación como problema NP-duro, lo que significa que encontrar una solución óptima es computacionalmente intratable para instancias grandes. Por ello, en la práctica, se recurre a heurísticas y metaheurísticas para obtener soluciones aproximadas con alta calidad en tiempos razonables \cite{ref7}.
 
-\subsubsection{Variantes del VRP}
-
-Dado que las aplicaciones del VRP en el mundo real presentan restricciones y características específicas, han surgido múltiples variantes del problema. Entre las más estudiadas se encuentran:
+Dado que las aplicaciones del VRP en el mundo real presentan restricciones y características específicas, han surgido múltiples variantes del problema. Entre las más estudiadas se encuentran: el Problema de Enrutamiento de Vehículos Capacitado (CVRP), el Problema de Enrutamiento de Vehículos con Ventanas de Tiempo (VRPTW), Problema de Enrutamiento de Vehículos con Múltiples Depósitos (MDVRP). A continuación se detallan los mencionados anteriormente.
 \begin{enumerate}
 \item
 \textbf{Problema de Enrutamiento de Vehículos Capacitado (CVRP):}\\
-En esta variante, cada vehículo tiene una capacidad máxima que no puede ser excedida por la suma de las demandas de los clientes asignados a su ruta. Introducida como una extensión directa del VRP, el CVRP es relevante en contextos logísticos donde el volumen o peso de los productos transportados juega un rol crucial, como en la distribución de alimentos o materiales de construcción. El principal desafío en el CVRP es balancear el uso eficiente de los vehículos mientras se minimizan los costos totales, respetando las restricciones de capacidad.\cite{ref6}
+En esta variante, cada vehículo tiene una capacidad máxima que no puede ser excedida por la suma de las demandas de los clientes asignados a su ruta. El CVRP es relevante en contextos logísticos donde el volumen o peso de los productos transportados juega un rol crucial, como en la distribución de alimentos o materiales de construcción. El principal desafío en el CVRP es balancear el uso eficiente de los vehículos mientras se minimizan los costos totales, respetando las restricciones de capacidad \cite{ref6}. 
 
 \item
 \textbf{Problema de Enrutamiento de Vehículos con Ventanas de Tiempo (VRPTW):}\\
-Aquí, además de optimizar las rutas, se deben cumplir ventanas de tiempo específicas durante las cuales cada cliente puede ser atendido. Esta variante es común en servicios de entrega, como el correo o las empresas de paquetería, donde los clientes especifican franjas horarias para recibir sus pedidos. El VRPTW introduce complejidad adicional al problema, ya que las soluciones deben sincronizar las rutas y los tiempos de servicio, minimizando penalizaciones por retrasos o tiempos de espera.\cite{ref9}
+Aquí, además de optimizar las rutas, se debe cumplir un intervalo de tiempo específico durante el cual un cliente debe ser visitado para realizar la entrega. Esta variante es común en servicios de entrega, como el correo o las empresas de paquetería, donde los clientes especifican franjas horarias para recibir sus pedidos. El VRPTW introduce complejidad adicional al problema, ya que las soluciones deben sincronizar las rutas y los tiempos de servicio, minimizando penalizaciones por retrasos o tiempos de espera \cite{ref9}.
 
 \item
 \textbf{Problema de Enrutamiento de Vehículos con Múltiples Depósitos (MDVRP):}\\
-En el MDVRP, los vehículos pueden partir de múltiples depósitos en lugar de un único punto central. Esto refleja escenarios reales donde empresas con centros de distribución regionales buscan optimizar sus operaciones de manera integrada. La asignación de clientes a depósitos y la planificación de rutas eficaces son desafíos clave en esta variante.\cite{ref1}
-
-\item
-\textbf{Problema de Enrutamiento de Vehículos Abierto (OVRP):}\\
-En esta variante, los vehículos no están obligados a regresar al depósito al finalizar sus rutas. El OVRP modela situaciones donde los vehículos pueden terminar sus recorridos en ubicaciones remotas, como entregas a largo alcance en transporte intermodal. Esto reduce costos al evitar viajes innecesarios de retorno, pero complica la logística, ya que los puntos finales deben estar estratégicamente definidos.
-
-\item
-\textbf{Problema de Enrutamiento de Vehículos con Entregas Divididas (SDVRP):}
-A diferencia del VRP clásico, en el SDVRP se permite que un cliente sea atendido por múltiples vehículos. Esta variante es útil cuando las demandas de ciertos clientes superan la capacidad de un solo vehículo o cuando se busca maximizar la flexibilidad operativa. Sin embargo, el SDVRP introduce complejidad adicional en la planificación, al requerir una coordinación eficiente entre los vehículos.
-Métodos de Solución
+En el MDVRP, los vehículos pueden partir de múltiples depósitos en lugar de un único punto central. Esto refleja escenarios reales donde empresas con centros de distribución regionales buscan optimizar sus operaciones de manera integrada. La asignación de clientes a depósitos y la planificación de rutas eficaces son desafíos clave en esta variante \cite{ref1}.
 \end{enumerate}
 
-Dada la complejidad del VRP y sus variantes, se han desarrollado múltiples enfoques para resolverlos. Los métodos exactos, como la programación lineal entera y el branch-and-bound, son efectivos para instancias pequeñas, pero su escalabilidad es limitada \cite{ref5}. En instancias más grandes, se emplean heurísticas y metaheurísticas como la búsqueda de vecindad variable (VNS), la búsqueda en vecindades amplias (LNS)\cite{ref4}, los algoritmos genéticos y la colonia de hormigas.\cite{ref7} Estas técnicas buscan un balance entre la exploración del espacio de soluciones y la explotación de las áreas más prometedoras.
+Debido a su clasificación como un problema NP-Duro, se han desarrollado múltiples enfoques para resolverlos. Los métodos exactos, como la programación lineal entera y la ramificación y acotación, son efectivos para instancias pequeñas, pero su escalabilidad es limitada \cite{ref5}. En instancias más grandes, se emplean heurísticas y metaheurísticas como la búsqueda de vecindad variable (VNS), la búsqueda en vecindades amplias (LNS) \cite{ref4}, los algoritmos genéticos y la colonia de hormigas \cite{ref7}. Estas técnicas buscan un balance entre la exploración del espacio de soluciones y la explotación de las áreas más prometedoras.
 
-Los recientes avances incluyen el uso de métodos híbridos y técnicas basadas en aprendizaje automático para mejorar la eficiencia y robustez de los algoritmos. Además, la creación de conjuntos de datos de prueba más complejos y diversos, como los benchmarks de \cite{ref10}, ha permitido evaluar y comparar diferentes enfoques de manera más rigurosa, impulsando el progreso en el campo.
+La creación de conjuntos de datos de prueba más complejos y diversos, como los benchmarks de \cite{ref10}, han permitido evaluar y comparar las soluciones de diferentes enfoques de manera más rigurosa.
+
+En la siguiente sección se presenta la definición de solución del VRP y las operaciones que se pueden hacer sobre las mismas.
 
 \subsection{Criterios de vecindad}
+Para poder definir que es un criterio de vecindad, necesitamos definir primero que es una solución del VRP. De manera general una solución consiste en un conjunto de rutas $r$ a las cuales, en la mayoría de variantes, pertenecen un grupo de clientes $c$ como se muestra en la figura \ref{fig:solution}. Según las características del problema la estructura de la solución puede variar.
 
-En el contexto del Vehicle Routing Problem (VRP) y sus variantes, los criterios de vecindad juegan un papel fundamental dentro de los algoritmos de búsqueda local y metaheurísticas. Estos criterios definen cómo se generan y exploran las soluciones vecinas a una solución actual, permitiendo mejorarla gradualmente o escapar de óptimos locales. En esencia, un criterio de vecindad establece las reglas mediante las cuales se modifica una solución, y la elección de criterios adecuados es crucial para la eficacia de los métodos de optimización.
-Ejemplos de Criterios de Vecindad
-\begin{enumerate}
+\begin{figure} [h]
+\centering
+\[
+S=(r_1:(c_1,c_2,c_3),
+r_2:(c_4,c_5),
+r_2:(c_6,c_7,c_8))
+\]
+\caption{Ejemplo de solución de un VRP}
+\label{fig:solution}
+\end{figure}
+
+Luego de haber definido que es una solucion del VRP, se puede definir que un criterio de vecindad es un conjunto de operaciones que modifican una solucion, permitiendo crear nuevas. Formalmente se puede definir en el espacio de soluciones $X$ como una aplicacion $\mu:X \rightarrow 2^X$, tal que a cada solucion $x \in X$ le asigna un conjunto de soluciones $\mu(x) \subset X$, las cuales se llaman soluciones vecinas de $x$ o vecindad de $x$
+
+Cuando se usan algoritmos de búsqueda local para resolver el VRP, los criterios de vecindad juegan un papel fundamental. Estos criterios permiten mejorar la solución gradualmente o escapar de óptimos locales. Por lo tanto la elección de criterios adecuados es crucial para la eficacia de los métodos de optimización.
+
+A continuación se presentan algunos ejemplos de Criterios de Vecindad:
+\begin{itemize}
 \item
-    \textbf{Reubicación de un cliente (Relocation):}
+    \textbf{Reubicación de un cliente:}
     Este criterio consiste en mover un cliente de una ruta a otra o a una posición diferente dentro de la misma ruta. Por ejemplo, un cliente puede ser reubicado para equilibrar las cargas de los vehículos o para reducir el costo de la ruta.
 \item
-    \textbf{Intercambio de clientes (Swap):}
+    \textbf{Intercambio de clientes:}
     En este caso, se intercambian dos clientes entre diferentes rutas o dentro de la misma ruta. Esto permite ajustar las rutas para optimizar la distancia total recorrida o cumplir restricciones específicas, como las de capacidad o tiempo.
 \item
-    \textbf{Intercambio de secuencias (2-opt y 3-opt):}
+    \textbf{Intercambio de subrutas:}
     Estos criterios implican modificar subrutas intercambiando dos o tres aristas, respectivamente. Por ejemplo, en un movimiento 2-opt, se eliminan dos aristas de la solución actual y se reconectan los nodos para formar una ruta diferente. Este tipo de criterio es común en problemas como el TSP y se adapta bien al VRP para minimizar la distancia total.
 \item
-    \textbf{Inserción de clientes (Insertion):}
+    \textbf{Inserción de clientes:}
     Este criterio selecciona un cliente que no está incluido en la solución actual o que ha sido eliminado temporalmente, y lo inserta en una posición que minimice el costo de la ruta. Este enfoque es particularmente útil en heurísticas constructivas y métodos como la Búsqueda en Vecindades Amplias (LNS).
 \item
     \textbf{Intercambio múltiple (Generalized Swap):}
-    Extiende el concepto de intercambio a grupos de clientes. Por ejemplo, se pueden intercambiar secuencias completas de clientes entre rutas para explorar vecindarios más amplios.
+    Extiende el concepto de intercambio a grupos de clientes. Por ejemplo, se pueden intercambiar subrutas completas de clientes entre rutas para explorar vecindarios más amplios.
+\end{itemize}
+
+Los criterios de vecindad mantienen el equilibrio entre la intensificación y la diversificación en la búsqueda. La intensificación se enfoca en explorar soluciones cercanas para mejorar la calidad local, mientras que la diversificación permite moverse a regiones distantes del espacio de soluciones para evitar quedarse atrapado en óptimos locales. Sin embargo en una vecindad existen regiones que poseen un mayor numero de soluciones que mejoran a la actual, por lo tanto, explorar dichas regiones puede conducirnos a la solución de manera mas rápida. En la siguiente sección se define que es una región.
+
+\subsection{Región de una vecindad}
+En el contexto de la exploración de vecindades, una región se define como un subconjunto del espacio de soluciones vecinas, agrupadas en función de características comunes determinadas por el criterio de vecindad aplicado. Estas regiones surgen como resultado de particionar el espacio de soluciones, permitiendo realizar búsquedas focalizadas e intensivas en áreas específicas que se consideran prometedoras en términos de encontrar soluciones óptimas o cercanas al óptimo.
+
+La partición en regiones facilita la exploración eficiente al reducir la complejidad asociada con el análisis exhaustivo de vecindades grandes. Este enfoque divide el espacio de búsqueda en unidades manejables, lo que permite identificar y priorizar regiones con alto potencial, evitando la dispersión de los recursos computacionales en zonas menos relevantes. 
+
+El concepto de región no solo organiza la exploración del espacio de soluciones, sino que también se alinea con estrategias de optimización híbridas que separan fases de exploración y explotación. Durante la exploración, las regiones se analizan superficialmente para clasificar su calidad. Posteriormente, en la fase de explotación, se intensifica la búsqueda dentro de las regiones clasificadas como más prometedoras, maximizando la eficiencia del proceso de optimización.
+
+Las regiones pueden ser combinadas con la metaheurística de Búsqueda en Vecindad Variable, permitiendo guiar la búsqueda a áreas especificas de las vecindades generadas. En la siguiente sección se profundiza en el trabajo de Búsqueda de Vecindad Variable.
+
+\subsection{Búsqueda en Vecindades Variables (VNS)}
+
+La Búsqueda en Vecindades Variables (VNS) es una metaheurística de optimización introducida por Mladenović y Hansen en 1997 \cite{ref12}, diseñada para resolver problemas de optimización combinatoria y global mediante la exploración sistemática de múltiples vecindades en el espacio de soluciones. A diferencia de otros métodos de búsqueda local, que suelen trabajar con una única vecindad, VNS se basa en la idea de que cambiar dinámicamente entre diferentes estructuras de vecindad. 
+
+Esta metaheurística se basa en dos principios fundamentales:
+\begin{enumerate}
+\item
+Un mínimo local para una estructura de vecindad no lo es necesariamente para otra.
+\item
+Un mínimo se considera global si es un mínimo local para cualquiera sea el criterio de vecindad.
 \end{enumerate}
 
-\subsubsection{Importancia de los Criterios de Vecindad}
+Estos principios indican el uso de varios criterios de vecindad para resolver el problema, debido a que si se encuentra un optimo local en uno de ellos, sea posible cambiar de criterio y continuar la exploración, en cambio si hay un optimo local para todos los criterios entonces se puede afirmar que es el optimo global del problema. Esta es la idea de la VNS.
 
-Los criterios de vecindad son esenciales para equilibrar la intensificación y la diversificación en la búsqueda. La intensificación se enfoca en explorar soluciones cercanas para mejorar la calidad local, mientras que la diversificación permite moverse a regiones distantes del espacio de soluciones para evitar quedarse atrapado en óptimos locales. Técnicas como la Búsqueda de Vecindad Variable (VNS) aprovechan conjuntos de criterios de vecindad para cambiar sistemáticamente entre diferentes vecindarios, mejorando así la eficacia de la búsqueda.
+El algoritmo parte de una solución inicial y utiliza un conjunto finito de criterios de vecindad predefinidos. Durante cada iteración, se explora el entorno de la solución actual con una estructura específica; si se encuentra una mejora, la solución se actualiza y el proceso reinicia con la primera estructura, pero si no hay mejoras, se cambia a la siguiente estructura hasta cumplir con las condiciones de parada, es decir hasta que se utilicen todos los criterios.
 
-En el VRP, los criterios de vecindad también permiten incorporar restricciones específicas del problema, como ventanas de tiempo o capacidades de los vehículos, ajustando las operaciones de modificación para asegurar la factibilidad de las soluciones. Esto hace que sean una herramienta versátil y fundamental en la optimización combinatoria.
+En el contexto del VRP y sus variantes, VNS ha sido utilizado para encontrar soluciones cercanas al óptimo \cite{ref14,ref15}. Por ejemplo, en el Capacitated Vehicle Routing Problem (CVRP), las modificaciones suelen implicar el intercambio de clientes entre rutas o la reasignación de clientes dentro de una misma ruta \cite{ref17}. En el VRP con ventanas de tiempo (VRPTW), VNS se adapta para cumplir con restricciones temporales, incorporando operadores que ajusten las secuencias de visitas según las ventanas de tiempo permitidas \cite{ref14}. Adicionalmente, en variantes como el \textit{Multi-Depot VRP} (MDVRP), los vecindarios incluyen movimientos que redistribuyen clientes entre depósitos, optimizando las rutas de manera global \cite{ref15}.
 
-\subsection{Busqueda en Vecindades Variables (VNS)}
+Una de las principales ventajas de VNS es su simplicidad y flexibilidad, ya que puede integrarse fácilmente con otros enfoques de optimización \cite{ref12}. Sin embargo, su efectividad depende de un diseño adecuado de los vecindarios y de los operadores utilizados, ya que estos determinan la calidad de las soluciones exploradas y la capacidad del algoritmo para escapar de óptimos locales \cite{ref16}. Se han introducido variantes avanzadas a la metaheurística como la Búsqueda de Vecindad Infinitamente Variable (IVNS) \cite{ref16}, que permite explorar vecindarios dinámicamente generados mediante un lenguaje formal, ampliando aún más el alcance de esta técnica.
 
-La Busqueda en Vecindades Variables (VNS) es una metaheurística de optimización introducida por Mladenović y Hansen en 1997, diseñada para resolver problemas de optimización combinatoria y global mediante la exploración sistemática de múltiples vecindarios en el espacio de soluciones. A diferencia de otros métodos de búsqueda local, que suelen trabajar con un único vecindario, VNS se basa en la idea de que cambiar dinámicamente entre diferentes estructuras de vecindad permite escapar de óptimos locales y explorar de manera más efectiva el espacio de soluciones. Este enfoque ha demostrado ser particularmente efectivo en problemas NP-duros, como el Vehicle Routing Problem (VRP) y sus variantes.
+VNS sigue siendo una herramienta en la optimización combinatoria, particularmente en problemas donde la calidad de la solución es un aspecto crítico debido a su capacidad para encontrar un optimo global respecto a los criterios de los cuales se disponga. Su enfoque sistemático para explorar el espacio de soluciones lo convierte en un método robusto y eficiente, adecuado para una amplia gama de aplicaciones prácticas e industriales \cite{ref12,ref13,ref14}. Otra herramienta para la solución de problemas de optimización es una  biblioteca de \textit{software} de la cual se trata en la sección siguiente.
 
-El método VNS opera mediante una secuencia iterativa de tres fases principales. Primero, se selecciona una solución inicial, que puede generarse de forma aleatoria o utilizando una heurística constructiva. A continuación, en la fase de perturbación, se aplica un operador que modifica la solución actual, cambiando su vecindario de acuerdo con una estructura predeterminada. En la siguiente etapa, se utiliza una búsqueda local para explorar el vecindario perturbado en busca de una solución mejor. Finalmente, si la nueva solución es superior, esta se convierte en la solución actual, y el proceso se repite; en caso contrario, el algoritmo cambia a un nuevo vecindario. Este cambio sistemático permite explorar de manera exhaustiva y estratégica el espacio de soluciones.
 
-En el contexto del VRP y sus variantes, VNS ha sido ampliamente utilizado para encontrar soluciones cercanas al óptimo. Por ejemplo, en el Capacitated Vehicle Routing Problem (CVRP), las perturbaciones suelen implicar el intercambio de clientes entre rutas o la reasignación de clientes dentro de una misma ruta. En el VRP con ventanas de tiempo (VRPTW), VNS se adapta para cumplir con restricciones temporales, incorporando operadores que ajusten las secuencias de visitas según las ventanas de tiempo permitidas. Adicionalmente, en variantes como el \textit{Multi-Depot VRP} (MDVRP), los vecindarios incluyen movimientos que redistribuyen clientes entre depósitos, optimizando las rutas de manera global.
 
-Una de las principales ventajas de VNS es su simplicidad y flexibilidad, ya que puede integrarse fácilmente con otros enfoques de optimización. Sin embargo, su efectividad depende de un diseño adecuado de los vecindarios y de los operadores utilizados, ya que estos determinan la calidad de las soluciones exploradas y la capacidad del algoritmo para escapar de óptimos locales. Recientes investigaciones han introducido variantes avanzadas como la Búsqueda de Vecindad Infinitamente Variable (IVNS), que permite explorar vecindarios dinámicamente generados mediante un lenguaje formal, ampliando aún más el alcance de esta técnica.
-
-VNS sigue siendo una herramienta valiosa en la optimización combinatoria, particularmente en problemas donde la calidad de la solución y el tiempo de ejecución son críticos. Su enfoque sistemático para explorar el espacio de soluciones lo convierte en un método robusto y eficiente, adecuado para una amplia gama de aplicaciones prácticas e industriales.
-
-\subsection{Busqueda en Vecindades Grandes (LNS)}
+\subsection{Búsqueda en Vecindades Grandes (LNS)}
 La Búsqueda en Vecindarios Amplios (Large Neighborhood Search, LNS) es una metaheurística diseñada para resolver problemas de optimización combinatoria, como el Problema de Enrutamiento de Vehículos (VRP), permitiendo la exploración de grandes porciones del espacio de soluciones. Introducida por Shaw en 1998, LNS se basa en un enfoque innovador que combina la destrucción y reconstrucción de soluciones para escapar de óptimos locales, un desafío recurrente en problemas complejos de optimización.
 
 El principio central de LNS es dividir el proceso de búsqueda en dos etapas complementarias. En la primera etapa, denominada destrucción, se elimina una parte sustancial de la solución actual, generando una solución parcial que abre la posibilidad de explorar nuevas configuraciones. Posteriormente, en la etapa de reconstrucción, la solución incompleta se completa nuevamente mediante el uso de heurísticas específicas o técnicas optimizadoras que intentan mejorar el resultado inicial. Este ciclo de destrucción y reconstrucción es clave para explorar un vecindario amplio del espacio de búsqueda, lo que diferencia a LNS de métodos tradicionales que solo realizan cambios pequeños y locales.
@@ -100,31 +124,22 @@ La implementación de LNS sigue un flujo bien definido. El proceso inicia con la
 En términos de impacto, LNS ha demostrado ser una de las herramientas más eficaces para abordar problemas complejos de ruteo, especialmente aquellos donde las restricciones operativas y las necesidades de optimización dificultan la aplicación de métodos exactos. Su capacidad para combinar flexibilidad, escalabilidad y adaptabilidad lo ha convertido en una técnica preferida tanto en la investigación académica como en aplicaciones prácticas, como la logística, la distribución y la gestión del transporte.
 
 \subsection{GLPK}
-El GNU Linear Programming Kit (GLPK) es una biblioteca de software diseñada para resolver problemas de programación lineal (PL) y programación lineal entera mixta (MIP). GLPK es parte del proyecto GNU y se distribuye bajo la Licencia Pública General de GNU, lo que lo convierte en una opción de código abierto ampliamente adoptada tanto en entornos académicos como industriales. Ofrece herramientas robustas y flexibles para modelar y resolver problemas de optimización combinatoria, siendo particularmente útil en aplicaciones como logística, transporte y gestión de recursos.
+El GNU Linear Programming Kit (GLPK) es una biblioteca de \textit{software} diseñada para resolver problemas de programación lineal (PL) y programación lineal entera mixta (MIP). GLPK es parte del proyecto GNU y se distribuye bajo la Licencia Pública General de GNU, lo que lo convierte en una opción de código abierto ampliamente adoptada tanto en entornos académicos como industriales. Ofrece herramientas robustas y flexibles para modelar y resolver problemas de optimización combinatoria, siendo particularmente útil en aplicaciones como logística, transporte y gestión de recursos.
 
-GLPK se centra en la resolución de problemas formulados en términos de modelos matemáticos, donde una función objetivo debe ser maximizada o minimizada bajo un conjunto de restricciones lineales. Estos modelos se especifican típicamente utilizando el lenguaje de modelado GNU Math Programming Language (GMPL), similar en sintaxis a lenguajes como AMPL. GMPL permite describir problemas de manera declarativa y concisa, separando la definición del modelo de los datos específicos, lo que facilita la reutilización y la adaptación del modelo a diferentes escenarios.
+GLPK se centra en la resolución de problemas formulados en términos de modelos matemáticos, donde se maximiza o minimiza una función objetivo bajo un conjunto de restricciones lineales. Estos modelos se especifican típicamente utilizando el lenguaje de modelado GNU Math Programming Language (GMPL). GMPL permite describir problemas de manera declarativa y concisa, separando la definición del modelo de los datos específicos, lo que facilita la reutilización y la adaptación del modelo a diferentes escenarios.
 
-Una de las características destacadas de GLPK es su implementación del método simplex revisado y del método primal-dual para resolver problemas de programación lineal. Para problemas más complejos, como los de programación lineal entera mixta, GLPK utiliza un enfoque de ramificación y corte (branch-and-cut). Este enfoque combina técnicas de ramificación para dividir el problema en subproblemas más pequeños y métodos de corte para eliminar regiones inviables del espacio de búsqueda, mejorando la eficiencia del proceso.
+Una de las características destacadas de GLPK es su implementación del método simplex revisado y del método primal-dual para resolver problemas de programación lineal. Para problemas más complejos, como los de programación lineal entera mixta, GLPK utiliza un enfoque de ramificación y acotación (branch-and-cut). Este enfoque combina técnicas de ramificación para dividir el problema en subproblemas más pequeños y métodos de corte para eliminar regiones inviables del espacio de búsqueda, mejorando la eficiencia del proceso.
 
-En el contexto del Problema de Enrutamiento de Vehículos (VRP) y sus variantes, GLPK puede ser utilizado para modelar y resolver formulaciones exactas. Por ejemplo, el VRP Capacitado (CVRP) se puede representar como un problema de programación lineal entera mixta, donde las restricciones garantizan que cada cliente sea atendido por un único vehículo y que las capacidades no se excedan. GLPK permite implementar estas restricciones de manera directa y explorar soluciones óptimas para instancias pequeñas o medianas. Además, cuando se combina con metaheurísticas como la Búsqueda de Vecindad Variable (VNS) o la Búsqueda en Vecindarios Amplios (LNS), GLPK puede proporcionar soluciones iniciales de alta calidad o refinar las soluciones generadas.
-
-Entre las principales ventajas de GLPK se encuentra su flexibilidad para trabajar con diversos tipos de problemas de optimización y su integración con otros lenguajes de programación como Python y C++, a través de interfaces y bindings. Esto lo convierte en una herramienta poderosa para investigadores y desarrolladores que necesitan soluciones personalizadas y escalables. Sin embargo, su rendimiento puede ser limitado en instancias de gran escala o problemas extremadamente complejos debido a la naturaleza computacionalmente intensiva de los métodos exactos que utiliza.
-
-GLPK ha demostrado ser una herramienta esencial en el campo de la optimización, proporcionando una plataforma accesible y confiable para abordar problemas desafiantes. Su uso en combinación con otras metodologías, como metaheurísticas y técnicas de descomposición, amplía su aplicabilidad en la investigación operativa y la industria.
+La siguiente sección esta dedicada al lenguaje de programación LISP y el porqué es eficiente para la solución del VRP.
 
 \subsection{Lisp}
-LISP (List Processing) es uno de los lenguajes de programación más antiguos, creado por John McCarthy en 1958 para el desarrollo de aplicaciones relacionadas con la inteligencia artificial (IA). Su flexibilidad, simplicidad y capacidad para manejar estructuras simbólicas lo han consolidado como una herramienta poderosa para abordar problemas complejos, incluidos los relacionados con la optimización y el modelado en investigación operativa, como el Problema de Enrutamiento de Vehículos (VRP) y sus variantes, como el CVRP.
+ LISP (LISt Processing) es un lenguaje de programación utilizado en el ámbito de la optimización combinatoria, especialmente en la resolución de problemas como el Vehicle Routing Problem (VRP) y sus variantes debido a su eficiencia en el manejo de listas \cite{ref1,ref2,ref3,ref4,ref16}. Una de las aplicaciones de LISP en este contexto es su uso para implementar estrategias de exploración en vecindades, crucial en métodos como la Búsqueda de Vecindad Variable (VNS) y sus extensiones.
 
-LISP se distingue por su enfoque en el procesamiento de listas y su propiedad de homoiconicidad, que le permite tratar el código como datos. Esto posibilita que los programas en LISP puedan modificarse a sí mismos durante su ejecución, una característica clave para escenarios donde los algoritmos requieren adaptarse dinámicamente o explorar espacios de búsqueda complejos. Además, su compatibilidad con la programación funcional facilita la creación de algoritmos concisos y reutilizables.
+La implementación en LISP permite realizar operaciones de manera eficiente gracias a su sistema de listas, macros y funciones genéricas. Debido a esto, LISP se utiliza para estructurar y realizar operaciones complejas dentro de los vecindarios de soluciones del VRP. Esto incluye la selección y manipulación de rutas y subrutas, el cálculo iterativo de costos para evaluar cambios en la solución, y la identificación de regiones óptimas en base a criterios definidos. 
 
-En el contexto del VRP, LISP se ha empleado en combinación con métodos exactos y heurísticos para modelar y resolver problemas. Su habilidad para trabajar con estructuras simbólicas y listas lo hace ideal para implementar algoritmos de búsqueda como la Búsqueda de Vecindad Variable (VNS) y la Búsqueda en Vecindarios Amplios (LNS). Asimismo, en problemas que demandan la exploración de grandes vecindarios o la gestión de restricciones complejas, LISP permite desarrollar funciones que manipulen soluciones de manera eficiente y elegante.
+LISP ha sido utilizado para generar automáticamente criterios de vecindad mediante lenguajes formales \cite{ref16}. Estos lenguajes, definidos con gramáticas libres del contexto, permiten crear cadenas que representan infinitos criterios de vecindad adaptables a las características específicas de cada variante del VRP. Esto no solo agiliza la exploración de vecindades, sino que también garantiza la consistencia en las operaciones realizadas. 
 
-Un ejemplo destacado es el uso de LISP para crear frameworks personalizados para el CVRP. Su sistema de macros, que permite extender el lenguaje dinámicamente, lo convierte en una opción ideal para implementar operaciones como la modificación de rutas, el intercambio de clientes y la evaluación de costos en iteraciones rápidas. Por ejemplo, es posible definir estructuras simbólicas para representar rutas y usar funciones recursivas para evaluar el impacto de los cambios en tiempo real.
-
-Otra ventaja significativa de LISP en problemas de optimización es su capacidad para integrar librerías externas como GLPK, lo que permite combinar sus funcionalidades con métodos de programación lineal o entera. Esto facilita el trabajo con problemas híbridos, donde las soluciones iniciales generadas mediante heurísticas en LISP se refinan usando métodos exactos. Además, implementaciones como SBCL (Steel Bank Common Lisp) ofrecen un alto rendimiento, lo que hace que LISP sea competitivo en términos de velocidad para aplicaciones prácticas.
-
-Aunque lenguajes más modernos como Python o Julia han ganado popularidad en ciertos campos, LISP sigue siendo una opción potente para proyectos que requieren adaptabilidad y eficiencia en la manipulación de estructuras complejas. Su papel en la investigación operativa y su aplicación a problemas como el VRP resaltan su relevancia continua en la resolución de problemas avanzados de optimización.
-
+Debido a su capacidad para crear criterios de vecindad y manejar macros, lo convierten en un lenguaje capaz de buscar óptimos de manera exhaustiva rápida y eficiente.
 
 \bibliographystyle{plain}
 \bibliography{bibliography} 
