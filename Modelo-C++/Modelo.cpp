@@ -4,6 +4,7 @@
 #include <tuple>
 #include <algorithm>
 #include <string>
+#include <chrono>
 
 using namespace std;
 
@@ -132,13 +133,17 @@ public:
             routes_criteria.push_back(path);
         }
 
-        for (const auto &route : routes_criteria)
+        routes = routes_criteria;
+
+        for (const auto &route : routes)
         {
             for (const auto &bridge : route)
             {
                 cout << bridge.first << "->" << bridge.second << endl;
             }
         }
+        reset_constant();
+        calc_constant();
     }
 
 private:
@@ -191,45 +196,28 @@ private:
         }
 
         // Calculate S
+        calc_acumulate_s();
         for (size_t route = 0; route < routes.size(); ++route)
         {
-            for (size_t j = 0; j < routes[route].size(); ++j)
+            for (size_t i = 0; i < routes[route].size(); ++i)
             {
-                for (size_t i = 0; i < routes[route].size(); ++i)
+                for (size_t j = i + 2; j < routes[route].size(); ++j)
                 {
-                    if (j - i <= 1)
-                        break;
-                    int sum = 0;
-                    for (size_t k = 0; k < routes[route].size(); ++k)
-                    {
-                        if (k >= j)
-                            break;
-                        else if (k <= i)
-                            continue;
-                        else
-                        {
-                            pair<int, int> bridge = routes[route][k];
-                            sum += weight[bridge.first][bridge.second];
-                        }
-                    }
-                    S[{route, i, j}] = sum;
+                    S[{route, i, j}] = acumulate_S[route][j] - acumulate_S[route][i + 1];
                 }
             }
         }
 
         // Calculate Demanda por subruta
+        calc_acumulate_d();
+        cout << "hasta aqui" << endl;
         for (size_t route = 0; route < routes.size(); route++)
         {
-            for (size_t j1 = 0; j1 < routes[route].size() - 1; j1++)
+            for (size_t j1 = 0; j1 < routes[route].size(); j1++)
             {
                 for (size_t j2 = j1 + 1; j2 < routes[route].size(); j2++)
                 {
-                    int sum = 0;
-                    for (size_t k = j1; k < j2; k++)
-                    {
-                        sum += demands[routes[route][k].second];
-                    }
-                    D[{route, j1, j2}] = sum;
+                    D[{route, j1, j2}] = acumulate_D[route][j2] - acumulate_D[route][j1];
                 }
             }
         }
@@ -268,9 +256,58 @@ private:
             }
         }
     }
+    void calc_acumulate_s()
+    {
+        acumulate_S.resize(routes.size());
+        for (size_t route = 0; route < routes.size(); ++route)
+        {
+            acumulate_S[route].resize(routes[route].size()); // +1 para incluir 0 al inicio
+            for (size_t i = 2; i < routes[route].size(); ++i)
+            {
+                pair<int, int> bridge = routes[route][i - 1];
+
+                acumulate_S[route][i] = acumulate_S[route][i - 1] + weight[bridge.first][bridge.second];
+            }
+        }
+    }
+    void calc_acumulate_d()
+    {
+        acumulate_D.resize(routes.size());
+        for (size_t route = 0; route < routes.size(); ++route)
+        {
+            acumulate_D[route].resize(routes[route].size()); // +1 para incluir 0 al inicio
+            for (size_t i = 1; i < routes[route].size(); ++i)
+            {
+                pair<int, int> bridge = routes[route][i - 1];
+
+                acumulate_D[route][i] = acumulate_D[route][i - 1] + demands[routes[route][i].first];
+            }
+        }
+    }
+    void reset_constant()
+    {
+        S.clear();
+        D.clear();
+        K.clear();
+        L.clear();
+        c.clear();
+    }
+
+    vector<vector<int>> acumulate_D;
+    vector<vector<int>> acumulate_S;
 };
 
-void printear(const map<tuple<int, int, int>, int> &matrix)
+void printearS(const map<tuple<int, int, int>, int> &matrix)
+{
+    for (const auto &item : matrix)
+        cout << "{" << get<0>(item.first) << ", " << get<1>(item.first) << ", " << get<2>(item.first) << "} -> " << item.second << endl;
+}
+void printearL(const map<tuple<int, int, int>, int> &matrix)
+{
+    for (const auto &item : matrix)
+        cout << "{" << get<0>(item.first) << ", " << get<1>(item.first) << ", " << get<2>(item.first) << "} -> " << item.second << endl;
+}
+void printearK(const map<tuple<int, int, int>, int> &matrix)
 {
     for (const auto &item : matrix)
         cout << "{" << get<0>(item.first) << ", " << get<1>(item.first) << ", " << get<2>(item.first) << "} -> " << item.second << endl;
