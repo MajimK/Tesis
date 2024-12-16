@@ -1,38 +1,48 @@
 (in-package :vrp)
-(format t "Loading optimization-funcs.lisp...")
+(format t "Loading optimization-funcs.lisp...~%")
 
 
 
-(defvar *routes* '((1 2)	 ; Ruta 1
-                                 (3 4 5) ; Ruta 2
-                                 (6)     ; Ruta 3
-                                 (7 8)   ; Ruta 4
-                                 (9)     ; Ruta 5
-                                 (10 11) ; Ruta 6
-                                 (12)    ; Ruta 7
-                                 (13 14) ; Ruta 8
-                                 (15)    ; Ruta 9
-                                 (16 17) ; Ruta 10
-                                 (18)    ; Ruta 11
-                                 (19 20) ; Ruta 12
-                                 (21 22) ; Ruta 13
-                                 (23)    ; Ruta 14
-                                 (24)    ; Ruta 15
-                                 (25 26) ; Ruta 16
-                                 (27 28) ; Ruta 17
-                                 (29)    ; Ruta 18
-                                 (30 31) ; Ruta 19
-                                 (32)    ; Ruta 20
-                                 (33 34) ; Ruta 21
-                                 (35)))
+(defparameter *routes* '((68 14)
+(5 1 44 23)
+(84 77)
+(91 48 36)
+(90 12 41 94)
+(83 56 74 42)
+(26 93)
+(71 63)
+(49 27 76 72)
+(79 88 38)
+(96 20)
+(16 92)
+(98 67)
+(81 55 15)
+(6 10 8 95)
+(85 50 59 75)
+(51 73 7 54)
+(62 97)
+(34 52 87 35)
+(64 86)
+(100 21 53)
+(25 60 37 99 70)
+(22 31 58 43 78)
+(9 33 2 40)
+(57 28 24 29 46 30 82)
+(3 4 47 19)
+(69 13 45)
+(32 18)
+(66 61 17)
+(89 11 39 80 65)))
 
 
-
-(defparameter *c* (make-hash-table :test 'equal))  
-(defparameter *s* (make-hash-table :test 'equal)) 
+(defparameter *c* (make-hash-table :test 'equal))
+(defparameter *s* (make-hash-table :test 'equal))
+(defparameter *d* (make-hash-table :test 'equal)) 
 (defparameter *k* (make-hash-table :test 'equal))  
 (defparameter *l* (make-hash-table :test 'equal))
 (defparameter *p* (make-hash-table :test 'equal))
+
+
 
 (defun create-bridges (routes)
   (mapcar (lambda (ruta)
@@ -43,7 +53,8 @@
 	      (reverse bridges)))
 	  routes))
 
-(defvar *bridges* (create-bridges *routes*))
+   (defparameter *bridges* (create-bridges *routes*))
+
 
 (defun calculate-matrix-c (bridges)
   "Calculate the cost matrix c using the node-to-node tuples."
@@ -74,6 +85,22 @@
 		(let ((cost (nth node2 (nth node1 *cvrp-distances*))))
 		  (incf sum cost))))
 	    (setf (gethash (list r i j) *s*) sum)))))))
+
+(defun calculate-matrix-d (routes-tuples)
+  "Calculate the cost sum matrix S using the node-to-node tuples."
+  (loop for r from 0 below (length routes-tuples) do
+    (let ((route (nth r routes-tuples)))
+      (loop for j1 from 0 below (length route) do
+        (loop for j2 from (+ j1 1) below (length route) do
+          (let ((sum 0))
+            (loop for k from (+ j1 1) below j2 do
+              (let ((node1 (nth 0 (nth k route)))
+		    (node2 (nth 1 (nth k route))))
+		(let ((cost1 (nth (- node1 1) *cvrp-demands*))
+		      (cost2 (nth (- node2 1) *cvrp-demands*)))
+		  (incf sum (+ cost1 cost2)))))
+	    (setf (gethash (list r j1 j2) *d*) sum)))))))
+
 
 (defun calculate-matrix-k (routes-tuples)
   "Calculate the cost matrix K for connecting nodes from different routes."
@@ -108,16 +135,30 @@
     (setf (gethash r *p*) cost)))
 
 
+(defun imprimir-bridges ()
+  "Imprime el contenido de la variable *bridges*."
+  (format t "Contenido de *bridges*:~%")
+  (loop for ruta in *bridges* do
+    (format t "~a~%" ruta)))
 
 
 
 
+(let ((start-time (get-internal-real-time)))
+  (defparameter *bridges* (create-bridges *routes*))
 
 (calculate-matrix-c *bridges*)
 (calculate-p)
 (calculate-matrix-s *bridges*)
 (calculate-matrix-k *bridges*)
-(calculate-matrix-l *bridges*)
-
+  (calculate-matrix-l *bridges*)
+  (calculate-matrix-d *bridges*)
+  
+(let ((end-time (get-internal-real-time)))  
+  (format t "Tiempo transcurrido en opti-funcs: ~a segundos~%"
+          (/ (- end-time start-time) ;; Diferencia en ticks
+             (float internal-time-units-per-second)))))
+;(imprimir-bridges)
+;(imprimir-matriz *d*)
 
 
