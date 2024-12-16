@@ -28,9 +28,9 @@ void client_optimization(Graph &model, graph_clients &model_client, bool binary 
     {
         for (size_t c2 = c1 + 1; c2 < number_Clients + 1; c2++)
         {
-            for (size_t p1 = 0; p1 < 3; p1++)
+            for (size_t p1 = 0; p1 < model.bridges.size(); p1++)
             {
-                for (size_t p2 = 0; p2 < 3; p2++)
+                for (size_t p2 = 0; p2 < model.bridges.size(); p2++)
                 {
                     var_count++;
                     Y_index[{c1, c2, p1, p2}] = var_count;
@@ -67,33 +67,48 @@ void client_optimization(Graph &model, graph_clients &model_client, bool binary 
     {
         for (size_t c2 = c1 + 1; c2 < number_Clients + 1; c2++)
         {
-            int route_retrieve1 = model_client.client_original_pos[c1];
-            int route_retrieve2 = model_client.client_original_pos[c2];
-            tuple<int, int, int> best_pos_c1 = model_client.best_pos[c1];
-            tuple<int, int, int> best_pos_c2 = model_client.best_pos[c2];
-
-            for (size_t p1 = 0; p1 < 3; p1++)
+            for (size_t p1 = 0; p1 < model.bridges.size(); p1++)
             {
-                for (size_t p2 = 0; p2 < 3; p2++)
+                for (size_t p2 = 0; p2 < model.bridges.size(); p2++)
                 {
-
-                    int route_insert1 = model_client.pos_route[p1];
-                    int route_insert2 = model_client.pos_route[p2];
-
-                    long penalty = 0;
-                    int pos_c1 = Get_tuple_element(p1, best_pos_c1);
-                    int pos_c2 = Get_tuple_element(p2, best_pos_c2);
+                    int costc1 = model_client.cost[{c1, p1}];
+                    int costc2 = model_client.cost[{c2, p2}];
                     int indice = Y_index[{c1, c2, p1, p2}];
-
-                    int total_cost = model_client.value_best_pos[{c1, pos_c1}] + model_client.value_best_pos[{c2, pos_c2}];
-                    double coeficent_objetive = model.total_cost + total_cost;
-                    if (pos_c1 == pos_c2)
+                    int total_cost = costc1 + costc2;
+                    if (p1 == p2)
                     {
-                        coeficent_objetive += 100000;
+                        total_cost = model_client.insert_together[{c1, c2, p1}];
                     }
+
+                    double coeficent_objetive = model.total_cost + total_cost;
+
                     glp_set_obj_coef(lp, indice, coeficent_objetive);
                 }
             }
+
+            // Esta seccion comentada funciona al palo borrar la de arriba
+            // tuple<int, int, int> best_pos_c1 = model_client.best_pos[c1];
+            // tuple<int, int, int> best_pos_c2 = model_client.best_pos[c2];
+
+            // for (size_t p1 = 0; p1 < 3; p1++)
+            // {
+            //     for (size_t p2 = 0; p2 < 3; p2++)
+            //     {
+
+            //         long penalty = 0;
+            //         int pos_c1 = Get_tuple_element(p1, best_pos_c1);
+            //         int pos_c2 = Get_tuple_element(p2, best_pos_c2);
+            //         int indice = Y_index[{c1, c2, p1, p2}];
+
+            //         int total_cost = model_client.value_best_pos[{c1, pos_c1}] + model_client.value_best_pos[{c2, pos_c2}];
+            //         double coeficent_objetive = model.total_cost + total_cost;
+            //         if (pos_c1 == pos_c2)
+            //         {
+            //             coeficent_objetive += 100000;
+            //         }
+            //         glp_set_obj_coef(lp, indice, coeficent_objetive);
+            //     }
+            // }
         }
     }
 
@@ -143,11 +158,11 @@ void client_optimization(Graph &model, graph_clients &model_client, bool binary 
 
 int main()
 {
-    auto inicio = chrono::high_resolution_clock::now();
     for (size_t i = 0; i < 1; i++)
     {
         Generate_Problems problem;
-        problem.Create_Problem(35, 20, 3);
+        problem.Create_Problem(35, 20, 4);
+        problem.Create_file_with_data();
 
         // vector<vector<int>> matrix_cost = {{0, 26, 45, 16, 39, 18, 7, 19, 39, 12, 45, 39, 12, 14, 4, 40, 16, 35, 23, 42, 29, 2, 48, 47, 48, 8, 48, 3, 9, 19, 35, 9, 3, 14, 47, 24},
         //                                    {8, 0, 42, 27, 32, 33, 17, 35, 13, 22, 47, 24, 6, 49, 35, 26, 30, 42, 19, 14, 41, 39, 32, 7, 6, 27, 3, 39, 41, 48, 22, 29, 27, 44, 17, 25},
@@ -212,20 +227,37 @@ int main()
         // // 11203 = 4+1+5+1+4 = 17
         // // 00103 = 16 + 1 + 8+ 4 = 29
 
-        // Graph model(matrix_cost, list, demands, 20);
-        // graph_clients modelo2(model.routes, matrix_cost, demands, model.route_demand, 20);
-        problem.Create_file_with_data();
+        vector<vector<int>> matrix_cost = {{0, 5, 4, 5, 1, 4},
+                                           {5, 0, 6, 5, 2, 1},
+                                           {4, 6, 0, 1, 3, 5},
+                                           {5, 5, 1, 0, 6, 7},
+                                           {1, 2, 3, 6, 0, 8},
+                                           {4, 1, 5, 7, 8, 0}};
 
-        Graph model(problem.weight, problem.solution, problem.demand, problem.capacity);
-        graph_clients modelo2(model.routes, problem.weight, problem.demand, model.route_demand, problem.capacity);
-        // model.print_graph();
-        // // modelo2.print_clients();
-        cout << "Modelo 2 clientes binario" << endl;
-        cout << endl;
+        vector<vector<int>> list = {{2, 3, 1},
+                                    {4, 5}};
+
+        vector<int> demands = {0, 2, 3, 4, 5, 2};
+
+        Graph model(matrix_cost, list, demands, 10);
+        graph_clients modelo2(model.routes, matrix_cost, demands, model.route_demand, 10);
+        // Graph model(problem.weight, problem.solution, problem.demand, problem.capacity);
+        // graph_clients modelo2(model.routes, problem.weight, problem.demand, model.route_demand, problem.capacity);
+        model.print_graph();
+        printearS(model.S);
+        // modelo2.print_clients();
+        // cout << "Modelo 2 clientes binario" << endl;
+        // cout << endl;
+
+        auto inicio = chrono::high_resolution_clock::now();
         client_optimization(model, modelo2);
-        cout << endl;
+        auto fin = chrono::high_resolution_clock::now();
+        chrono::duration<double> duracion = fin - inicio;
+        cout << "Todo tomo " << duracion.count() << " seg en ejecutarse." << std::endl;
 
-        Data save;
+        // cout << endl;
+
+        // Data save;
 
         // save.AddSolution(problem.solution);
         // save.AddCaracteristics(model.route_demand);
@@ -233,7 +265,4 @@ int main()
         cout << endl;
         // save.createJson("DataSol.json", i);
     }
-    auto fin = chrono::high_resolution_clock::now();
-    chrono::duration<double> duracion = fin - inicio;
-    cout << "Todo tomo " << duracion.count() << " seg en ejecutarse." << std::endl;
 }
