@@ -11,9 +11,9 @@
 
 using namespace std;
 
-void optimization(Graph &model, Data &savedata, bool binary = true, bool verbose = false, double number_of_solution = 1.0, long penalty_index = 10000)
+tuple<int, int, int, int, int> optimization(Graph &model, Data &savedata, bool binary = true, bool verbose = false, double number_of_solution = 1.0, long penalty_index = 10000)
 {
-
+    int solution = 0;
     cout << "entre en optimization" << endl;
     glp_prob *lp = glp_create_prob();
     glp_set_prob_name(lp, "Model-X");
@@ -34,7 +34,7 @@ void optimization(Graph &model, Data &savedata, bool binary = true, bool verbose
                 {
                     for (int i = 0; i < model.routes[r2].size(); ++i)
                     {
-                        if (j1 >= j2 || (r1 == r2 && i <= j2 && i >= j1))
+                        if (j1 >= j2 || (r1 == r2 && i < j2 && i > j1))
                         {
                             continue;
                         }
@@ -92,7 +92,7 @@ void optimization(Graph &model, Data &savedata, bool binary = true, bool verbose
                 {
                     for (int i = 0; i < model.routes[r2].size(); i++)
                     {
-                        if (j1 >= j2 || (r1 == r2 && i <= j2 && i >= j1))
+                        if (j1 >= j2 || (r1 == r2 && i < j2 && i > j1))
                         {
                             continue;
                         }
@@ -113,6 +113,11 @@ void optimization(Graph &model, Data &savedata, bool binary = true, bool verbose
                             penalty += (demand_retrieve - capacity) * penalty_index;
                         }
                         coeficent_objetive += (sumar + eliminar + penalty);
+
+                        if ((i == j1 || i == j2) && r1 == r2)
+                        {
+                            coeficent_objetive = model.total_cost;
+                        }
                         restric[indice] = coeficent_objetive;
 
                         if (verbose)
@@ -176,6 +181,7 @@ void optimization(Graph &model, Data &savedata, bool binary = true, bool verbose
             if (value > 0)
             {
                 cout << "Valor de X[" << var << "] = " << value << endl;
+                solution = var;
                 cout << "Var represents: " << " Key: (" << get<0>(index_to_params[var]) << "," << get<1>(index_to_params[var]) << "," << get<2>(index_to_params[var]) << "," << get<3>(index_to_params[var]) << "," << get<4>(index_to_params[var]) << ")" << endl;
                 // savedata.AddBestsNeigh({get<0>(index_to_params[var]), get<1>(index_to_params[var]), get<2>(index_to_params[var]), get<3>(index_to_params[var]), get<4>(index_to_params[var])});
             }
@@ -188,15 +194,50 @@ void optimization(Graph &model, Data &savedata, bool binary = true, bool verbose
 
     glp_delete_prob(lp);
     glp_free_env();
+    return index_to_params[solution];
+}
+
+void removeEmptyRoutes(vector<vector<int>> &list)
+{
+    // Elimina rutas vacías del vector de rutas
+    list.erase(
+        remove_if(list.begin(), list.end(), [](const vector<int> &route)
+                  {
+                      return route.empty(); // Condición: la ruta está vacía
+                  }),
+        list.end());
+}
+
+vector<vector<int>> transformSolution(vector<vector<int>> list, int r1, int j1, int j2, int r2, int i)
+{
+    // Extraer la subruta de la ruta r1
+    vector<int> subroute(list[r1].begin() + j1, list[r1].begin() + j2);
+
+    // Eliminar la subruta de la ruta r1
+    list[r1].erase(list[r1].begin() + j1, list[r1].begin() + j2);
+
+    // Insertar la subruta en la ruta r2 en la posición de la arista i
+    if (r1 == r2)
+    {
+        list[r2].insert(list[r2].begin() + i - 1, subroute.begin(), subroute.end());
+    }
+    else
+    {
+        list[r2].insert(list[r2].begin() + i, subroute.begin(), subroute.end());
+    }
+
+    removeEmptyRoutes(list);
+
+    return list;
 }
 
 int main()
 {
-    auto inicio = chrono::high_resolution_clock::now();
     for (size_t i = 0; i < 1; i++)
     {
         Generate_Problems problem;
-        problem.Create_Problem(35, 20, 3);
+        problem.Create_Problem(300, 20, 6);
+        problem.Create_file_with_data();
 
         // vector<vector<int>> matrix_cost = {{0, 26, 45, 16, 39, 18, 7, 19, 39, 12, 45, 39, 12, 14, 4, 40, 16, 35, 23, 42, 29, 2, 48, 47, 48, 8, 48, 3, 9, 19, 35, 9, 3, 14, 47, 24},
         //                                    {8, 0, 42, 27, 32, 33, 17, 35, 13, 22, 47, 24, 6, 49, 35, 26, 30, 42, 19, 14, 41, 39, 32, 7, 6, 27, 3, 39, 41, 48, 22, 29, 27, 44, 17, 25},
@@ -258,12 +299,24 @@ int main()
         //                        18, 17, 17, 13, 1, 11, 18, 14, 11, 8, 18, 2, 3, 12, 10, 7,
         //                        16, 12, 3};
 
-        // Graph model(matrix_cost, list, demands, 20);
-        // graph_clients modelo2(model.routes, matrix_cost, demands, model.route_demand, 20);
-        problem.Create_file_with_data();
+        // vector<vector<int>> matrix_cost = {{0, 5, 4, 5, 1, 4},
+        //                                    {5, 0, 6, 5, 2, 1},
+        //                                    {4, 6, 0, 1, 3, 5},
+        //                                    {5, 5, 1, 0, 6, 7},
+        //                                    {1, 2, 3, 6, 0, 8},
+        //                                    {4, 1, 5, 7, 8, 0}};
 
+        // vector<vector<int>> list = {{2, 3, 1},
+        //                             {4, 5}};
+
+        // vector<int> demands = {0, 2, 3, 4, 5, 2};
+
+        // Graph model(matrix_cost, list, demands, 100);
+        // graph_clients modelo2(model.routes, matrix_cost, demands, model.route_demand, 20);
+        cout << "Calculate time model" << endl;
         Graph model(problem.weight, problem.solution, problem.demand, problem.capacity);
-        // model.print_graph();
+
+        model.print_graph();
 
         Data save;
 
@@ -272,12 +325,42 @@ int main()
         // save.AddCaracteristics(model.route_cost);
         // cout << "Modelo X binario" << endl;
         // cout << endl;
-        optimization(model, save);
+        int p = 0;
+        tuple<int, int, int, int, int> solution;
+        int r1_s = 0;
+        int j1_s = 0;
+        int j2_s = 0;
+        int r2_s = 0;
+        int i_s = 0;
 
-        cout << endl;
-        // save.createJson("DataSol.json", i);
+        auto inicio = chrono::high_resolution_clock::now();
+        while (true)
+        {
+            solution = optimization(model, save);
+
+            int r1 = get<0>(solution);
+            int j1 = get<1>(solution);
+            int j2 = get<2>(solution);
+            int r2 = get<3>(solution);
+            int i = get<4>(solution);
+
+            if (r1 == r1_s && j1 == j1_s && j2 == j2_s && r2 == r2_s && i == i_s)
+            {
+                break;
+            }
+            r1_s = r1;
+            j1_s = j1;
+            j2_s = j2;
+            r2_s = r2;
+            i_s = i;
+
+            problem.solution = transformSolution(problem.solution, r1, j1, j2, r2, i);
+            model = Graph(problem.weight, problem.solution, problem.demand, problem.capacity);
+            // cout << endl;
+            // save.createJson("DataSol.json", i);
+        }
+        auto fin = chrono::high_resolution_clock::now();
+        chrono::duration<double> duracion = fin - inicio;
+        cout << "Todo tomo " << duracion.count() << " seg en ejecutarse." << std::endl;
     }
-    auto fin = chrono::high_resolution_clock::now();
-    chrono::duration<double> duracion = fin - inicio;
-    cout << "Todo tomo " << duracion.count() << " seg en ejecutarse." << std::endl;
 }
