@@ -1,0 +1,79 @@
+\begin{thebibliography}{10}
+
+\bibitem{ref23}
+Alertaeconomica.
+\newblock Transporte de mercancías: siete aspectos que destacan su importancia
+  económica, 2023.
+\newblock Accedido: 2024-12-23.
+
+\bibitem{ref7}
+Roberto baldacci.
+\newblock Recent exact algorithms for solving the vehicle routing problem under
+  capacity and time window constraints.
+\newblock 2012.
+
+\bibitem{ref5}
+Daniela~González Beltrán.
+\newblock Generación automática de gramáticas para la obtención de
+  infinitos criterios de vecindad en el problema de enrutamiento de vehículos.
+\newblock mayo 2019.
+
+\bibitem{ref16}
+Olli Bräysy.
+\newblock A reactive variable neighborhood search for the vehicle-routing
+  problem with time windows.
+\newblock 2003.
+
+\bibitem{ref3}
+Gabriela~Mijenes Carrera.
+\newblock Análisis de vecindades en problemas de enrutamiento de vehículos
+  con múltiples depósitos y flotas heterogéneas.
+\newblock noviembre 2021.
+
+\bibitem{ref24}
+Sophie Huiberts.
+\newblock Upper and lower bounds on the smoothed complexity of the simplex
+  method.
+\newblock 2024.
+
+\bibitem{ref21}
+J.~K. Lenstra and A.~H. G.~Rinnooy Kan.
+\newblock Complexity of vehicle routing and scheduling problems.
+\newblock 1981.
+
+\bibitem{ref22}
+M-24.
+\newblock ¿cuántos kilómetros recorre un camión promedio en un año?
+\newblock 2023.
+
+\bibitem{ref18}
+Camila~Pérez Mosquera.
+\newblock Primeras aproximaciones a la búsqueda de vecindad infinitamente
+  variable.
+\newblock 2017.
+
+\bibitem{ref6}
+Héctor Felipe~Massón Rosquete.
+\newblock Exploración de vecindades grandes en el problema de enrutamiento de
+  vehículos usando técnicas estadísticas.
+\newblock mayo 2020.
+
+\bibitem{ref17}
+Mir Ehsan~Hesam Sadati.
+\newblock A hybrid variable neighborhood search approach for the multi-depot
+  green vehicle routing problem.
+\newblock 2021.
+
+\bibitem{ref4}
+José Jorge~Rodríguez Salgado.
+\newblock Una propuesta para la evaluación automática de soluciones vecinas
+  en un problema de enrutamiento de vehículos a partir del grafo de
+  evaluación de una solución.
+\newblock junio 2020.
+
+\bibitem{ref1}
+Sitrack.
+\newblock Costos en el transporte de cargamento: Un análisis profundo.
+\newblock 2023.
+
+\end{thebibliography}

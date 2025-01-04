@@ -1,0 +1,65 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{tcolorbox}
+\usepackage{subcaption}
+\usepackage[spanish]{babel}
+\usepackage{lipsum}
+\usepackage[lmargin=2cm,rmargin=4cm]{geometry}
+
+
+
+\begin{document}
+
+\section{Introducción}
+En la sociedad, muchos problemas requieren el uso de vehículos como herramienta para la distribución de cargas terrestres, dado que permite el abastecimiento de recursos esenciales para la vida cotidiana y contribuye significativamente al desarrollo económico, además constituye una forma generar puestos de trabajo \cite{ref23}, lo cual ayuda a impulsar el Producto Interno Bruto (PIB) de un país \cite{ref23}. Sin embargo, esta forma de transporte enfrenta desafíos como la búsqueda de rentabilidad y eficiencia, dado que el coste promedio de transporte terrestre se estima en 2.01 dólares por kilómetro recorrido \cite{ref1} y dado que un camión promedio recorre entre 80 000 y 120 000 kilómetros al año \cite{ref22}, el costo anual asociado sería de aproximadamente 160 800 dólares.
+
+La optimización es la rama de la matemática que estudia cuál es la mejor manera de hacer las cosas, y en particular el problema de enrutamiento de vehículos (VRP, por sus siglas en inglés) estudia cuál es la mejor forma de utilizar una flota de vehículos para satisfacer la demanda de los clientes cumpliendo las restricciones propias de cada problema.
+
+El problema de manera general consiste en: una flota de vehículos, un almacén central y un grupo de clientes a los cuales se les desea entregar los productos del almacén, y se desea diseñar los recorridos de los vehículos de forma que se satisfaga la demanda de todos los clientes, cumpliendo las restricciones del problema, al menor costo posible. Las restricciones que se deben cumplir, así como el cálculo del costo, dependen de cada problema particular.
+
+Dantzig y Ramser introdujeron el problema inicial en 1959 \cite{ref18}, bajo el nombre de ``El Problema de Despacho de Camiones'' y consistía en la modelación de varios camiones idénticos, los cuales, tenían que satisfacer las demandas de combustible de un número de gasolineras partiendo desde un mismo depósito. Otras variantes al VRP que han sido estudiadas son el problema de enrutamiento de vehículos con restricciones de capacidad (CVRP), con ventanas de tiempo (VRPTW) \cite{ref16}, multi-depósito (MDVRP) \cite{ref17}. Estas variantes abordan diferentes aspectos en la planificación logística, como la capacidad limitada de los vehículos, las restricciones temporales de los clientes y la existencia de múltiples puntos de partida o llegada.
+
+
+El VRP es un problema NP-Duro \cite{ref21}, lo que implica que encontrar soluciones óptimas para problemas de mediana dimensión conlleva un alto costo computacional. Esta complejidad se intensifica al abordar problemas de grandes dimensiones, que son los que típicamente se enfrentan en aplicaciones reales, como la distribución de productos en cadenas de suministro o el transporte de pasajeros en redes urbanas. Dado que explorar exhaustivamente estas soluciones requiere un tiempo de cómputo significativo debido al crecimiento exponencial del espacio de soluciones con el número de clientes y vehículos, las estrategias más utilizadas para abordar este problema han sido el desarrollo de metaheurísticas \cite{ref4} y métodos basados en búsquedas sistemáticas con mejoras iterativas, como los algoritmos de búsqueda local.
+
+Una de las técnicas que aprovecha estrategias basadas en la exploración inteligente del espacio de soluciones es la Búsqueda en Vecindad Variable (VNS) \cite{ref17}. VNS es una metaheurística basada en la idea de cambiar dinámicamente la forma de generar nuevas soluciones durante la búsqueda, para escapar de óptimos locales. La estrategia comienza a ejecutarse con una solución inicial y alterna entre diferentes maneras de generar nuevas soluciones, lo que permite explorar diversas áreas del espacio de soluciones. Este proceso se realiza mediante un balance entre dos enfoques: la intensificación, que busca mejorar la solución, y la diversificación, que trata de explorar nuevas áreas para evitar quedar atrapado en óptimos locales. Aunque técnicas como VNS permiten abordar problemas complejos de manera eficiente, en casos donde las instancias del problema son pequeñas, el uso de los algoritmos exactos permite obtener soluciones óptimas.
+
+Los algoritmos exactos para resolver el problema de enrutamiento de vehículos (VRP) se enfocan en encontrar soluciones óptimas garantizadas, explorando exhaustivamente el espacio de soluciones. A pesar de su elevado costo computacional, permiten resolver instancias pequeñas y evaluar la calidad de las soluciones obtenidas mediante heurísticas y metaheurísticas. En su mayoría estos algoritmos exactos utilizan técnicas como: Programación Entera y Lineal, Método de Ramificación y Acotamiento (Branch-and-Bound), Ramificación y Corte (Branch-and-Cut) \cite{ref7}.
+
+En los últimos años en la Facultad de Matemática y Computación de la Universidad de La Habana se han llevado a cabo estudios relacionados con estos problemas \cite{ref5,ref6,ref4,ref3}. Una de las investigaciones que se llevaron a cabo fue la de encontrar una manera de dividir las vecindades en regiones, para acortar el espacio de búsqueda y estimar las regiones donde podrían estar las mejores soluciones \cite{ref6}.
+
+En el trabajo mencionado, la estimación de las mejores regiones se realizó empleando técnicas estadísticas. Sin embargo, en este estudio se propone una aproximación alternativa basada en el uso de modelos de optimización lineal con variables continuas, los cuales tienen la ventaja de poder resolverse de manera eficiente incluso en problemas de gran escala \cite{ref24}. La idea central es aprovechar la solución obtenida del modelo continuo para identificar y estimar las regiones del espacio de soluciones donde podrían encontrarse las mejores opciones, lo que permite dirigir de manera más efectiva la búsqueda hacia las mejores soluciones.
+
+La situación descrita permite definir el siguiente problema científico: el diseño e implementación de modelos de optimización continua que permitan explorar de manera eficiente las vecindades en el espacio de soluciones del problema de enrutamiento de vehículos (VRP). Estos modelos deben ser capaces de identificar las regiones del espacio donde es más probable encontrar soluciones de alta calidad y superar las limitaciones computacionales de los métodos tradicionales, como la búsqueda exhaustiva.
+
+A partir del problema planteado, se enuncia la siguiente hipótesis: la implementación de modelos de optimización lineal continua para la exploración de vecindades en el VRP, junto con algoritmos eficientes que generen los datos necesarios, permitirá identificar las regiones más prometedoras del espacio de soluciones. Esto resultará en una herramienta computacional capaz de superar en eficiencia a los métodos tradicionales de búsqueda exhaustiva, proporcionando soluciones de alta calidad de manera más rápida y efectiva.
+
+El objetivo general de este trabajo es diseñar e implementar modelos de optimización continua diseñados para explorar vecindades en el espacio de soluciones del problema de enrutamiento de vehículos (VRP). Estos modelos buscan identificar las regiones del espacio donde es más probable encontrar soluciones de alta calidad. Asimismo, se busca evaluar la eficiencia computacional de la propuesta y comparándola con métodos tradicionales de búsqueda exhaustiva.
+
+Para alcanzar este objetivo general se proponen los siguientes objetivos específicos:
+\begin{itemize}
+\item
+Estudiar los algoritmos de solución del vrp basados en criterios de vecindad.
+\item
+Estudiar las particularidades de los criterios de vecindad del VRP.
+
+\item 
+Diseñar modelos de optimización lineal continua que, dada una vecindad específica, determine el mejor elemento del conjunto
+
+\item 
+Diseñar e implementar un algoritmo que permita generar de manera eficiente todos los datos necesarios para usar en los modelos de optimización.
+
+\item Comparar la velocidad de la propuesta realizada con respecto a realizar una búsqueda exhaustiva.
+\end{itemize}
+
+
+
+Este documento está estructurado de la siguiente forma: en el capítulo 1 se presentan los elementos básicos del trabajo, el problema de enrutamiento de vehículos, los criterios de vecindad, las regiones de una vecindad, la metaheurística de Búsqueda en Vecindad Variable y una breve introducción a la biblioteca GLPK y al lenguaje de programación \textit{Common Lisp}. En el capítulo 2 se presentan los modelos de optimización continua, así como los criterios con los que trabaja. El capítulo 3 se presenta una manera de generar sus datos de manera eficiente. En el capítulo 4 se presentan las comparaciones realizadas entre la búsqueda exhaustiva de la vecindad y usar los modelos de optimización propuestos en este trabajo. Finalmente se presentan las conclusiones, recomendaciones y trabajos futuros, así como la bibliografía consultada.
+%===========================Referencias===================================
+\newpage
+\bibliographystyle{plain}
+\bibliography{bibliography} 
+\end{document}
