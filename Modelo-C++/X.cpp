@@ -166,7 +166,27 @@ tuple<int, int, int, int, int> optimization(Graph &model, Data &savedata, bool b
     }
     glp_set_mat_row(lp, global_row_idx, indices.size() - 1, indices.data(), coeficientes.data());
 
+    auto inicios = chrono::high_resolution_clock::now();
     glp_simplex(lp, NULL);
+    auto fins = chrono::high_resolution_clock::now();
+    chrono::duration<double> duracions = fins - inicios;
+    cout << "Simplex tomo " << duracions.count() << " seg en ejecutarse." << std::endl;
+
+    auto iniciof = chrono::high_resolution_clock::now();
+    int best = 0;
+    int sol = 0;
+    for (const auto &item : restric)
+    {
+        if (item.second < best)
+        {
+            best = item.second;
+            sol = item.first;
+        }
+    }
+
+    auto finf = chrono::high_resolution_clock::now();
+    chrono::duration<double> duracionf = finf - iniciof;
+    cout << "For tomo " << duracionf.count() << " seg en ejecutarse." << std::endl;
 
     if (glp_get_status(lp) == GLP_OPT)
     {
@@ -236,7 +256,7 @@ int main()
     for (size_t i = 0; i < 1; i++)
     {
         Generate_Problems problem;
-        problem.Create_Problem(300, 20, 6);
+        problem.Create_Problem(100, 20, 6);
         problem.Create_file_with_data();
 
         // vector<vector<int>> matrix_cost = {{0, 26, 45, 16, 39, 18, 7, 19, 39, 12, 45, 39, 12, 14, 4, 40, 16, 35, 23, 42, 29, 2, 48, 47, 48, 8, 48, 3, 9, 19, 35, 9, 3, 14, 47, 24},
@@ -334,9 +354,9 @@ int main()
         int i_s = 0;
 
         auto inicio = chrono::high_resolution_clock::now();
-        while (true)
+        while (p < 1)
         {
-            solution = optimization(model, save);
+            solution = optimization(model, save, false);
 
             int r1 = get<0>(solution);
             int j1 = get<1>(solution);
@@ -358,6 +378,7 @@ int main()
             model = Graph(problem.weight, problem.solution, problem.demand, problem.capacity);
             // cout << endl;
             // save.createJson("DataSol.json", i);
+            p++;
         }
         auto fin = chrono::high_resolution_clock::now();
         chrono::duration<double> duracion = fin - inicio;
