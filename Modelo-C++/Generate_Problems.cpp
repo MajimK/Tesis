@@ -18,7 +18,6 @@ private:
     void capacity_calculate(int total_demand, int desire_routes)
     {
         capacity = (int)(desire_routes * (total_demand / (weight.size() - 1)));
-        cout << capacity << endl;
     }
 
 public:
@@ -99,9 +98,12 @@ public:
     }
     void Create_file_with_data()
     {
-        string save_weight = "(";
-        string save_solution = "(";
-        string save_demand = "(";
+        string separator = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
+        string initial_words = "(in-package :vrp) \n\n (format t \"Loading\")";
+        string save_weight = "(defparameter *cvrp-distances* '(";
+        string save_solution = "(defparameter *cvrp-routes* '(";
+        string save_demand = "(defparameter *cvrp-demands* '(";
+        string save_capacity = "(defparameter *cvrp-capacity* " + to_string(capacity) + ")";
         for (const auto &clients : weight)
         {
             save_weight += "(";
@@ -112,7 +114,7 @@ public:
             save_weight.replace(save_weight.size() - 1, 1, ")");
             save_weight += "\n";
         }
-        save_weight += ")";
+        save_weight += "))";
 
         for (const auto &routes : solution)
         {
@@ -124,7 +126,7 @@ public:
             save_solution.replace(save_solution.size() - 1, 1, ")");
             save_solution += "\n";
         }
-        save_solution += ")";
+        save_solution += "))";
 
         for (const auto &client : demand)
         {
@@ -135,10 +137,10 @@ public:
 
             save_demand += to_string(client) + " ";
         }
-        save_demand += ")";
+        save_demand += "))";
 
-        ofstream file("Data_to_lisp.txt", ios::app);
-        string save = save_weight + "\n\n" + save_demand + "\n\n" + save_solution + "\n\n" + to_string(capacity);
+        ofstream file("../cvrp-datas.txt", ios::app);
+        string save = separator + "\n" + initial_words + "\n\n" + save_weight + "\n\n" + save_demand + "\n\n" + save_solution + "\n\n" + save_capacity + "\n\n";
         file << save;
         file.close();
     }

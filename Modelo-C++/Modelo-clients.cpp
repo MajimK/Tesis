@@ -17,6 +17,21 @@ private:
     map<int, int> demand_route;
     int capacity = 0;
 
+    void Calculate_pos_of_clients()
+    {
+        int route = 0;
+        int pos = 0;
+        for (const auto &bridges : routes)
+        {
+            int nodo1 = 0;
+            for (size_t i = 0; i < bridges.size() - 1; i++)
+            {
+                pos_of_clients[bridges[i].second] = {pos + i, pos + i + 1};
+            }
+            pos += bridges.size();
+        }
+    }
+
     void Calculate_clients()
     {
         int route = 0;
@@ -71,7 +86,7 @@ private:
                         cost[{client, pos}] = 0;
                         continue;
                     }
-                    int insert = weight[bridge.first][client] + weight[client][bridge.second];
+                    int insert = weight[bridge.first][client] + weight[client][bridge.second] - weight[bridge.first][bridge.second];
                     position[{client, pos}] = insert;
 
                     // Hasta aqui yo tenia algo funcional
@@ -337,6 +352,186 @@ private:
         }
     }
 
+    void Calculate_insert_pos_client()
+    {
+
+        for (int c1 = 1; c1 < client_weight.size() + 1; c1++)
+        {
+            for (int c2 = 1; c2 < client_weight.size() + 1; c2++)
+            {
+                if (c1 == c2)
+                {
+                    continue;
+                }
+
+                int pos = 0;
+                int cost = 0;
+                bool complete = false;
+                bool its = false;
+                for (auto const &bridge : routes)
+                {
+
+                    for (auto const &item : bridge)
+                    {
+                        if (retrieve_together.count({c1, c2}) != 0)
+                        {
+                            if (pos == pos_of_clients[c2].first && c1 != item.second)
+                            {
+                                cost += weight[item.first][c1];
+                            }
+                            else if (pos == pos_of_clients[c2].second && c1 != item.first)
+                            {
+                                cost += weight[c1][item.second];
+                                complete = true;
+                            }
+                            if (complete)
+                            {
+                                insert_pos_of_client[{c1, c2, pos - 1}] = cost;
+                                insert_pos_of_client[{c1, c2, pos}] = cost;
+                                break;
+                            }
+                        }
+                        else
+                        {
+
+                            if (pos == pos_of_clients[c2].first)
+                            {
+                                cost += weight[item.first][c1];
+                            }
+
+                            else if (pos == pos_of_clients[c2].second && cost != 0)
+                            {
+                                cost += weight[c1][item.second];
+                                complete = true;
+                            }
+
+                            if (complete)
+                            {
+                                insert_pos_of_client[{c1, c2, pos - 1}] = cost;
+                                insert_pos_of_client[{c1, c2, pos}] = cost;
+                                break;
+                            }
+                        }
+                        pos++;
+                    }
+                    if (complete)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    void Calculate_insert_retr_tog()
+    {
+        for (auto const &clients : retrieve_together)
+        {
+            int c1 = get<0>(clients).first;
+            int c2 = get<0>(clients).second;
+            int retrieve_cost = get<1>(clients);
+
+            int p1 = 0;
+            int route_p1 = 0;
+            for (auto const &bridge_p1 : routes)
+            {
+                for (auto const &item_p1 : bridge_p1)
+                {
+                    int p2 = 0;
+                    int route_p2 = 0;
+                    for (auto const &bridge_p2 : routes)
+                    {
+                        for (auto const &item_p2 : bridge_p2)
+                        {
+                            if (p1 == p2)
+                            {
+                                p2++;
+                                continue;
+                            }
+                            int insert_c1 = position[{c1, p1}];
+                            int insert_c2 = position[{c2, p2}];
+
+                            if (p2 == pos_of_clients[c1].first || p2 == pos_of_clients[c1].second)
+                            {
+                                insert_c2 = insert_pos_of_client[{c2, c1, p2}];
+                            }
+                            if (p1 == pos_of_clients[c2].first || p1 == pos_of_clients[c2].second)
+                            {
+                                insert_c1 = insert_pos_of_client[{c1, c2, p1}];
+                            }
+
+                            int penalty_c1 = 0;
+                            int penalty_c2 = 0;
+                            int demand_without_client = demand_route[client_original_pos[c1]] - demands[c1] - demands[c2];
+                            int total_cost = insert_c1 + insert_c2 - retrieve_cost;
+
+                            if (route_p1 == route_p2)
+                            {
+                                if (capacity < demand_route[route_p1] + demands[c1] + demands[c2])
+                                {
+
+                                    penalty_c1 += 10000 * (demand_route[route_p1] + demands[c1] + demands[c2] - capacity);
+                                }
+                                if (route_p1 == client_original_pos[c1])
+                                {
+
+                                    penalty_c1 = 0;
+                                }
+                                if (route_p2 == client_original_pos[c2])
+                                {
+
+                                    penalty_c2 = 0;
+                                }
+                                if (capacity < demand_without_client)
+                                {
+                                    penalty_c1 += 10000 * (demand_without_client - capacity);
+                                }
+                            }
+                            else
+                            {
+                                if (capacity < demand_route[route_p1] + demands[c1])
+                                {
+                                    penalty_c1 += 10000 * (demand_route[route_p1] + demands[c1] - capacity);
+                                }
+                                if (capacity < demand_route[route_p2] + demands[c2])
+                                {
+                                    penalty_c2 += 10000 * (demand_route[route_p2] + demands[c2] - capacity);
+                                }
+                                if (route_p1 == client_original_pos[c1])
+                                {
+                                    penalty_c1 = 0;
+                                }
+                                if (route_p2 == client_original_pos[c2])
+                                {
+                                    penalty_c2 = 0;
+                                }
+                                if (capacity < demand_route[route_p1] - demands[c1] - demands[c2])
+                                {
+                                    penalty_c1 += 10000 * (demand_route[route_p1] - demands[c1] - demands[c2] - capacity);
+                                }
+                            }
+
+                            total_cost += penalty_c1 + penalty_c2;
+                            if (p2 == pos_of_clients[c2].first || p2 == pos_of_clients[c2].second)
+                            {
+                                total_cost = cost[{c1, p1}];
+                            }
+                            if (p1 == pos_of_clients[c1].first || p1 == pos_of_clients[c1].second)
+                            {
+                                total_cost = cost[{c2, p2}];
+                            }
+                            insert_retr_together[{c1, c2, p1, p2}] = total_cost;
+                            p2++;
+                        }
+                        route_p2++;
+                    }
+                    p1++;
+                }
+                route_p1++;
+            }
+        }
+    }
+
 public:
     map<pair<int, int>, int> value_best_pos;
     map<int, int> pos_route;
@@ -348,21 +543,27 @@ public:
     map<pair<int, int>, int> retrieve_together;
     map<tuple<int, int, int>, int> insert_together;
     map<tuple<int, int, int, int>, int> insert_retr_together;
+    map<int, pair<int, int>> pos_of_clients;
+    map<tuple<int, int, int>, int> insert_pos_of_client;
 
     graph_clients(const vector<vector<pair<int, int>>> &Bridges, const vector<vector<int>> &matrix_weight, const vector<int> &Demands, const map<int, int> &Demand_route, int Capacity) : weight(matrix_weight), routes(Bridges), demands(Demands), demand_route(Demand_route), capacity(Capacity)
     {
         Calculate_clients();
         Calculate_position();
         Calculate_best_pos();
+        Calculate_pos_of_clients();
         Calculate_retrieve_together();
+        Calculate_insert_pos_client();
         Calculate_insert_together();
+        Calculate_insert_retr_tog();
+        cout << insert_pos_of_client[{3, 1, 3}] << endl;
     }
     void print_clients()
     {
-        for (const auto &item : client_weight)
-        {
-            cout << "Client: " << get<0>(item) << " cost: " << get<1>(item) << endl;
-        }
+        // for (const auto &item : client_weight)
+        // {
+        //     cout << "Client: " << get<0>(item) << " cost: " << get<1>(item) << endl;
+        // }
         // for (const auto &item : client_original_pos)
         // {
         //     cout << "Client: " << get<0>(item) << " route: " << get<1>(item) << endl;
@@ -395,6 +596,18 @@ public:
         // }
 
         // for (const auto &item : insert_together)
+        // {
+        //     cout << "costo: " << get<1>(item) << " cliente1: " << get<0>(get<0>(item)) << " cliente2: " << get<1>(get<0>(item)) << " position: " << get<2>(get<0>(item)) << endl;
+        // }
+        // for (const auto &item : insert_retr_together)
+        // {
+        //     cout << "costo: " << get<1>(item) << " cliente1: " << get<0>(get<0>(item)) << " cliente2: " << get<1>(get<0>(item)) << " position1: " << get<2>(get<0>(item)) << " position2: " << get<3>(get<0>(item)) << endl;
+        // }
+        // for (const auto &item : pos_of_clients)
+        // {
+        //     cout << "Client: " << get<0>(item) << " position: " << get<1>(item).first << " cost: " << get<1>(item).second << endl;
+        // }
+        // for (const auto &item : insert_pos_of_client)
         // {
         //     cout << "costo: " << get<1>(item) << " cliente1: " << get<0>(get<0>(item)) << " cliente2: " << get<1>(get<0>(item)) << " position: " << get<2>(get<0>(item)) << endl;
         // }

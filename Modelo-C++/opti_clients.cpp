@@ -75,6 +75,11 @@ void client_optimization(Graph &model, graph_clients &model_client, bool binary 
                     int costc2 = model_client.cost[{c2, p2}];
                     int indice = Y_index[{c1, c2, p1, p2}];
                     int total_cost = costc1 + costc2;
+                    if (model_client.retrieve_together.count({c1, c2}) != 0)
+                    {
+                        total_cost = model_client.insert_retr_together[{c1, c2, p1, p2}];
+                    }
+
                     if (p1 == p2)
                     {
                         total_cost = model_client.insert_together[{c1, c2, p1}];
@@ -158,7 +163,7 @@ void client_optimization(Graph &model, graph_clients &model_client, bool binary 
 
 int main()
 {
-    for (size_t i = 0; i < 1; i++)
+    for (size_t i = 0; i < 5; i++)
     {
         Generate_Problems problem;
         problem.Create_Problem(35, 20, 4);
@@ -227,24 +232,24 @@ int main()
         // // 11203 = 4+1+5+1+4 = 17
         // // 00103 = 16 + 1 + 8+ 4 = 29
 
-        vector<vector<int>> matrix_cost = {{0, 5, 4, 5, 1, 4},
-                                           {5, 0, 6, 5, 2, 1},
-                                           {4, 6, 0, 1, 3, 5},
-                                           {5, 5, 1, 0, 6, 7},
-                                           {1, 2, 3, 6, 0, 8},
-                                           {4, 1, 5, 7, 8, 0}};
+        // vector<vector<int>> matrix_cost = {{0, 5, 4, 5, 1, 4},
+        //                                    {5, 0, 6, 5, 2, 1},
+        //                                    {4, 6, 0, 1, 3, 5},
+        //                                    {5, 5, 1, 0, 6, 7},
+        //                                    {1, 2, 3, 6, 0, 8},
+        //                                    {4, 1, 5, 7, 8, 0}};
 
-        vector<vector<int>> list = {{2, 3, 1},
-                                    {4, 5}};
+        // vector<vector<int>> list = {{2, 3, 1},
+        //                             {4, 5}};
 
-        vector<int> demands = {0, 2, 3, 4, 5, 2};
+        // vector<int> demands = {0, 2, 3, 4, 5, 2};
 
-        Graph model(matrix_cost, list, demands, 10);
-        graph_clients modelo2(model.routes, matrix_cost, demands, model.route_demand, 10);
-        // Graph model(problem.weight, problem.solution, problem.demand, problem.capacity);
-        // graph_clients modelo2(model.routes, problem.weight, problem.demand, model.route_demand, problem.capacity);
+        // Graph model(matrix_cost, list, demands, 10);
+        // graph_clients modelo2(model.routes, matrix_cost, demands, model.route_demand, 10);
+        Graph model(problem.weight, problem.solution, problem.demand, problem.capacity);
+        graph_clients modelo2(model.routes, problem.weight, problem.demand, model.route_demand, problem.capacity);
         model.print_graph();
-        printearS(model.S);
+
         // modelo2.print_clients();
         // cout << "Modelo 2 clientes binario" << endl;
         // cout << endl;
@@ -254,6 +259,71 @@ int main()
         auto fin = chrono::high_resolution_clock::now();
         chrono::duration<double> duracion = fin - inicio;
         cout << "Todo tomo " << duracion.count() << " seg en ejecutarse." << std::endl;
+
+        std::ofstream archivo("../resultado.txt", ios ::app);
+
+        if (archivo.is_open())
+        {
+            // Escribir la información en el archivo
+            archivo << duracion.count() << std::endl;
+            archivo.close(); // Cerrar el archivo
+        }
+        else
+        {
+            std::cerr << "No se pudo abrir el archivo." << std::endl;
+        }
+        cout << i << endl;
+
+        std::ofstream archivo1("../resultado_no_simplex.txt", ios ::app);
+
+        double sol = INT_MAX;
+        tuple<int, int, int, int> best_sol;
+        auto inicio1 = chrono::high_resolution_clock::now();
+        for (size_t c1 = 1; c1 < problem.weight.size() + 1; c1++)
+        {
+            for (size_t c2 = c1 + 1; c2 < problem.weight.size() + 1; c2++)
+            {
+                for (size_t p1 = 0; p1 < model.bridges.size(); p1++)
+                {
+                    for (size_t p2 = 0; p2 < model.bridges.size(); p2++)
+                    {
+                        int costc1 = modelo2.cost[{c1, p1}];
+                        int costc2 = modelo2.cost[{c2, p2}];
+                        int total_cost = costc1 + costc2;
+                        if (modelo2.retrieve_together.count({c1, c2}) != 0)
+                        {
+                            total_cost = modelo2.insert_retr_together[{c1, c2, p1, p2}];
+                        }
+
+                        if (p1 == p2)
+                        {
+                            total_cost = modelo2.insert_together[{c1, c2, p1}];
+                        }
+
+                        double coeficent_objetive = model.total_cost + total_cost;
+                        if (coeficent_objetive < sol)
+                        {
+                            sol = coeficent_objetive;
+                            best_sol = {c1, c2, p1, p2};
+                        }
+                    }
+                }
+            }
+        }
+        cout << "best_sol_no_simplex: " << get<0>(best_sol) << get<1>(best_sol) << get<2>(best_sol) << get<3>(best_sol) << endl;
+        auto fin1 = chrono::high_resolution_clock::now();
+        chrono::duration<double> duracion1 = fin1 - inicio1;
+        cout << "Todo tomo " << duracion.count() << " seg en ejecutarse." << std::endl;
+        if (archivo1.is_open())
+        {
+            // Escribir la información en el archivo
+            archivo1 << duracion1.count() << std::endl;
+            archivo1.close(); // Cerrar el archivo
+        }
+        else
+        {
+            std::cerr << "No se pudo abrir el archivo." << std::endl;
+        }
 
         // cout << endl;
 

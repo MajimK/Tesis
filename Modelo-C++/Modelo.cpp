@@ -210,7 +210,6 @@ private:
 
         // Calculate Demanda por subruta
         calc_acumulate_d();
-        cout << "hasta aqui" << endl;
         for (size_t route = 0; route < routes.size(); route++)
         {
             for (size_t j1 = 0; j1 < routes[route].size(); j1++)
