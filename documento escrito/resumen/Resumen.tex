@@ -1,0 +1,26 @@
+\documentclass[12pt]{report}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{tcolorbox}
+\usepackage{subcaption}
+\usepackage[spanish]{babel}
+\usepackage{lipsum}
+\usepackage{xcolor}
+
+\usepackage[lmargin=2cm,rmargin=5cm]{geometry}
+
+\input{../word-comments.tex}
+
+
+\begin{document}
+Una de las estrategias para solucionar el Problema de Enrutamiento de Vehículos (VRP) son los algoritmos de búsqueda local. La manera en la que se exploran las vecindades dentro de estos algoritmos, es fundamental para encontrar soluciones que mejoren la solución actual. La única manera que garantiza encontrar el mejor vecino dentro de una vecindad es la exploración exhaustiva, pero para problemas con una gran cantidad de clientes realizar este tipo de búsqueda es inviable.
+
+En este trabajo se proponen dos técnicas para la exploración de las vecindades del VRP. Una de las técnicas consiste en la creación de modelos de optimización lineal continua para la exploración de tres vecindades del VRP: reinserción de subrutas, intercambio de subrutas y extracción e inserción de dos clientes. Estos modelos aprovechando los avances de los algoritmos para resolver problemas de optimización lineal continua, permiten explorar la vecindad reduciendo el tiempo de exploración en comparación con una búsqueda exhaustiva.
+
+La segunda técnica se basa en la división de la vecindad en regiones, lo que permite calcular los valores de las soluciones de manera más eficiente. Este enfoque reduce la cantidad de cálculos necesarios, facilitando la exploración y mejorando el rendimiento global de los algoritmos.
+
+Los experimentos demuestran que los modelos de optimización alcanzan soluciones óptimas en menor tiempo que una búsqueda exhaustiva. Sin embargo, los resultados también revelan que una búsqueda directa dentro de los datos generados es incluso más eficiente que resolver los modelos de optimización.
+
+\end{document}

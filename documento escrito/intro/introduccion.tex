@@ -27,25 +27,23 @@ El VRP es un problema NP-Duro \cite{ref21}, lo que implica que encontrar solucio
 
 Una de las técnicas que aprovecha estrategias basadas en la exploración inteligente del espacio de soluciones es la Búsqueda en Vecindad Variable (VNS) \cite{ref17}. VNS es una metaheurística basada en la idea de cambiar dinámicamente la forma de generar nuevas soluciones durante la búsqueda, para escapar de óptimos locales. La estrategia comienza a ejecutarse con una solución inicial y alterna entre diferentes maneras de generar nuevas soluciones, lo que permite explorar diversas áreas del espacio de soluciones. Este proceso se realiza mediante un balance entre dos enfoques: la intensificación, que busca mejorar la solución, y la diversificación, que trata de explorar nuevas áreas para evitar quedar atrapado en óptimos locales. Aunque técnicas como VNS permiten abordar problemas complejos de manera eficiente, en casos donde las instancias del problema son pequeñas, el uso de los algoritmos exactos permite obtener soluciones óptimas.
 
-Los algoritmos exactos para resolver el problema de enrutamiento de vehículos (VRP) se enfocan en encontrar soluciones óptimas garantizadas, explorando exhaustivamente el espacio de soluciones. A pesar de su elevado costo computacional, permiten resolver instancias pequeñas y evaluar la calidad de las soluciones obtenidas mediante heurísticas y metaheurísticas. En su mayoría estos algoritmos exactos utilizan técnicas como: Programación Entera y Lineal, Método de Ramificación y Acotamiento (Branch-and-Bound), Ramificación y Corte (Branch-and-Cut) \cite{ref7}.
+Los algoritmos exactos para resolver el problema de enrutamiento de vehículos (VRP) se enfocan en encontrar soluciones óptimas garantizadas, explorando exhaustivamente el espacio de soluciones. A pesar de su elevado costo computacional, permiten resolver instancias pequeñas y evaluar la calidad de las soluciones obtenidas mediante heurísticas y metaheurísticas. En su mayoría estos algoritmos exactos utilizan técnicas como: Programación Entera y Lineal, Método de Ramificación y Acotamiento (\textit{Branch-and-Bound}), Ramificación y Corte (\textit{Branch-and-Cut}) \cite{ref7}.
 
 En los últimos años en la Facultad de Matemática y Computación de la Universidad de La Habana se han llevado a cabo estudios relacionados con estos problemas \cite{ref5,ref6,ref4,ref3}. Una de las investigaciones que se llevaron a cabo fue la de encontrar una manera de dividir las vecindades en regiones, para acortar el espacio de búsqueda y estimar las regiones donde podrían estar las mejores soluciones \cite{ref6}.
 
 En el trabajo mencionado, la estimación de las mejores regiones se realizó empleando técnicas estadísticas. Sin embargo, en este estudio se propone una aproximación alternativa basada en el uso de modelos de optimización lineal con variables continuas, los cuales tienen la ventaja de poder resolverse de manera eficiente incluso en problemas de gran escala \cite{ref24}. La idea central es aprovechar la solución obtenida del modelo continuo para identificar y estimar las regiones del espacio de soluciones donde podrían encontrarse las mejores opciones, lo que permite dirigir de manera más efectiva la búsqueda hacia las mejores soluciones.
 
-El objetivo general de este trabajo es diseñar e implementar modelos de optimización continua diseñados para explorar vecindades en el espacio de soluciones del problema de enrutamiento de vehículos (VRP). Estos modelos buscan identificar las regiones del espacio donde es más probable encontrar soluciones de alta calidad. Asimismo, se busca evaluar la eficiencia computacional de la propuesta y comparándola con métodos tradicionales de búsqueda exhaustiva.
-
-Para alcanzar este objetivo general se proponen los siguientes objetivos específicos:
+El objetivo general de este trabajo es explorar vecindades en el espacio de soluciones del problema de enrutamiento de vehículos (VRP) con un menor costo computacional que si se realizara una exploración exhaustiva. Para alcanzar este objetivo general se proponen los siguientes objetivos específicos:
 \begin{itemize}
 \item
-Estudiar los algoritmos de solución del vrp basados en criterios de vecindad.
+Estudiar los algoritmos de solución del VRP basados en criterios de vecindad.
 \item
 Estudiar las particularidades de los criterios de vecindad del VRP.
 
-\item 
+\item
 Diseñar modelos de optimización lineal continua que, dada una vecindad específica, determine el mejor elemento del conjunto
 
-\item 
+\item
 Diseñar e implementar un algoritmo que permita generar de manera eficiente todos los datos necesarios para usar en los modelos de optimización.
 
 \item Comparar la velocidad de la propuesta realizada con respecto a realizar una búsqueda exhaustiva.
@@ -57,5 +55,5 @@ Este documento está estructurado de la siguiente forma: en el capítulo 1 se pr
 %===========================Referencias===================================
 \newpage
 \bibliographystyle{plain}
-\bibliography{bibliography} 
+\bibliography{bibliography}
 \end{document}

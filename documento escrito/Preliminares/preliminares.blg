@@ -1,0 +1,69 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: preliminares.aux
+Reallocating 'name_of_file' (item size: 1) to 6 items.
+The style file: plain.bst
+Reallocating 'name_of_file' (item size: 1) to 16 items.
+Database file #1: ../Bibliography.bib
+Warning--empty journal in ref19
+Warning--empty journal in ref7
+Warning--empty journal in ref5
+Warning--empty journal in ref16
+Warning--empty journal in ref8
+Warning--empty journal in ref3
+Warning--empty journal in ref20
+Warning--empty journal in ref15
+Warning--empty journal in ref10
+Warning--empty journal in ref21
+Warning--empty journal in ref28
+Warning--empty journal in ref9
+Warning--empty journal in ref14
+Warning--empty journal in ref18
+Warning--empty journal in ref11
+Warning--empty journal in ref6
+Warning--empty journal in ref17
+Warning--empty journal in ref4
+Warning--empty journal in ref12
+Warning--empty journal in ref13
+You've used 23 entries,
+            2118 wiz_defined-function locations,
+            588 strings with 6572 characters,
+and the built_in function-call counts, 4832 in all, are:
+= -- 449
+> -- 179
+< -- 0
++ -- 82
+- -- 52
+* -- 202
+:= -- 895
+add.period$ -- 70
+call.type$ -- 23
+change.case$ -- 94
+chr.to.int$ -- 0
+cite$ -- 43
+duplicate$ -- 223
+empty$ -- 403
+format.name$ -- 52
+if$ -- 955
+int.to.chr$ -- 0
+int.to.str$ -- 23
+missing$ -- 20
+newline$ -- 119
+num.names$ -- 46
+pop$ -- 145
+preamble$ -- 1
+purify$ -- 72
+quote$ -- 0
+skip$ -- 161
+stack$ -- 0
+substring$ -- 122
+swap$ -- 4
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 92
+warning$ -- 20
+while$ -- 46
+width$ -- 25
+write$ -- 214
+(There were 20 warnings)

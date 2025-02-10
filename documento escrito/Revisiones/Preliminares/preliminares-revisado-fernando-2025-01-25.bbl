@@ -1,0 +1,133 @@
+\begin{thebibliography}{10}
+
+\bibitem{ref19}
+Marwa Amous.
+\newblock A variable neighborhood search algorithm for the capacitated vehicle
+  routing problem.
+\newblock 2017.
+
+\bibitem{ref7}
+Roberto baldacci.
+\newblock Recent exact algorithms for solving the vehicle routing problem under
+  capacity and time window constraints.
+\newblock 2012.
+
+\bibitem{ref5}
+Daniela~González Beltrán.
+\newblock Generación automática de gramáticas para la obtención de
+  infinitos criterios de vecindad en el problema de enrutamiento de vehículos.
+\newblock mayo 2019.
+
+\bibitem{ref16}
+Olli Bräysy.
+\newblock A reactive variable neighborhood search for the vehicle-routing
+  problem with time windows.
+\newblock 2003.
+
+\bibitem{ref8}
+Juan Pablo~Orrego Cardozo.
+\newblock Solución al problema de ruteo de vehículos con capacidad limitada
+  (cvrp) usando una técnica metaheurística.
+\newblock 2016.
+
+\bibitem{ref3}
+Gabriela~Mijenes Carrera.
+\newblock Análisis de vecindades en problemas de enrutamiento de vehículos
+  con múltiples depósitos y flotas heterogéneas.
+\newblock noviembre 2021.
+
+\bibitem{ref20}
+G.~B. Dantzig and J.~H. Ramser.
+\newblock The truck dispatching problem.
+\newblock 1959.
+
+\bibitem{ref15}
+João Paulo~Queiroz dos Santos.
+\newblock Reactive search strategies using reinforcement learning, local search
+  algorithms and variable neighborhood search.
+\newblock 2014.
+
+\bibitem{ref10}
+Burak Eksioglu.
+\newblock The vehicle routing problem: A taxonomic review.
+\newblock 2009.
+
+\bibitem{ref27}
+Free~Software Foundation.
+\newblock Gnu general public license, version 3, 2007.
+\newblock Last accessed: 2024-12-14.
+
+\bibitem{ref21}
+J.~K. Lenstra and A.~H. G.~Rinnooy Kan.
+\newblock Complexity of vehicle routing and scheduling problems.
+\newblock 1981.
+
+\bibitem{ref28}
+Silvia Mazzeo;~Irene Loiseau.
+\newblock An ant colony algorithm for the capacitated vehicle routing.
+\newblock 2004.
+
+\bibitem{ref25}
+Andrew Makhorin.
+\newblock {\em GLPK (GNU Linear Programming Kit) Reference Manual}.
+\newblock Free Software Foundation, 2001.
+\newblock Last accessed: 2024-12-14.
+
+\bibitem{ref9}
+Abdul Kadar~Muhammad Masum.
+\newblock Solving the vehicle routing problem using genetic algorithm.
+\newblock 2011.
+
+\bibitem{ref14}
+Nenad Mladenovic and Pierre Hansen.
+\newblock Variable neighborhood search.
+\newblock 1997.
+
+\bibitem{ref18}
+Camila~Pérez Mosquera.
+\newblock Primeras aproximaciones a la búsqueda de vecindad infinitamente
+  variable.
+\newblock 2017.
+
+\bibitem{ref26}
+GNU Project.
+\newblock Glpk modeling language (gmpl), 2024.
+\newblock Last accessed: 2024-12-14.
+
+\bibitem{ref11}
+Yutao Qi.
+\newblock A decomposition based memetic algorithm for multi-objective vehicle
+  routing problem with time windows.
+\newblock 2015.
+
+\bibitem{ref6}
+Héctor Felipe~Massón Rosquete.
+\newblock Exploración de vecindades grandes en el problema de enrutamiento de
+  vehículos usando técnicas estadísticas.
+\newblock mayo 2020.
+
+\bibitem{ref17}
+Mir Ehsan~Hesam Sadati.
+\newblock A hybrid variable neighborhood search approach for the multi-depot
+  green vehicle routing problem.
+\newblock 2021.
+
+\bibitem{ref4}
+José Jorge~Rodríguez Salgado.
+\newblock Una propuesta para la evaluación automática de soluciones vecinas
+  en un problema de enrutamiento de vehículos a partir del grafo de
+  evaluación de una solución.
+\newblock junio 2020.
+
+\bibitem{ref12}
+Eduardo Uchoa.
+\newblock New benchmark instances for the capacitated vehicle routing problem.
+\newblock 2016.
+
+\bibitem{ref13}
+Vidal.
+\newblock Hybrid genetic search for the cvrp: Open-source implementation and
+  swap* neighborhood.
+\newblock 2021.
+
+\end{thebibliography}

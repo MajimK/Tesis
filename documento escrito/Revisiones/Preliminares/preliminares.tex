@@ -14,11 +14,11 @@
 
 \begin{document}
 	\chapter{Preliminares}
-	En este capítulo se presentan los elementos sobre los cuales se construye la presente investigación. En la sección \ref{sec:VRP} se presenta el Problema de Enrutamiento de Vehículos (VRP por sus siglas en inglés) así como sus algunas de sus variantes. En la sección \ref{sec:Criterios de vecindad} se introducen conceptos relacionados con los criterios de vecindad y región de una vecindad, esenciales para la exploración del espacio de búsqueda en algoritmos de búsqueda local. En la sección \ref{sec:VNS} se introduce la metaheurística Búsqueda en Vecindades Variables (VNS por sus siglas en inglés). Por último en las secciones \ref{sec:GLPK} y \ref{sec:lisp} se abordan los elementos de la biblioteca de software GLPK y el lenguaje de programación \textit{Common Lisp}, herramientas utilizadas durante el desarrollo de este trabajo.
+	En este capítulo se presentan los elementos sobre los cuales se construye la presente investigación. En la sección \ref{sec:VRP} se presenta el Problema de Enrutamiento de Vehículos (VRP por sus siglas en inglés) así como sus algunas de sus variantes. En la sección \ref{sec:Criterios de vecindad} se presentan conceptos relacionados con los criterios de vecindad y región de una vecindad, esenciales para la exploración del espacio de búsqueda en algoritmos de búsqueda local. En la sección \ref{sec:VNS} se introduce la metaheurística Búsqueda en Vecindades Variables (VNS por sus siglas en inglés). Por último en las secciones \ref{sec:GLPK} y \ref{sec:lisp} se abordan los elementos de la biblioteca de software GLPK y el lenguaje de programación \textit{Common Lisp}, herramientas utilizadas durante el desarrollo de este trabajo.
 
 	\section{Problema de Enrutamiento de Vehículos (VRP)}
 	\label{sec:VRP}
-	El Problema de Enrutamiento de Vehículos (VRP) es uno de los problemas de optimización combinatoria más estudiado por su importancia tanto práctica como teórica. Formulado por Dantzig y Ramser en 1959 \cite{ref20}, el VRP consiste en diseñar rutas óptimas para una flota de vehículos que deben satisfacer la demanda de un conjunto de clientes dispersos geográficamente \cite{ref12}. Estos vehículos parten y regresan a un depósito, con el objetivo de minimizar un criterio de costo, como la distancia total recorrida \cite{ref5}. El VRP tiene aplicaciones prácticas en áreas como la logística, el transporte urbano y la distribución de bienes en grandes cadenas de suministro \cite{ref10, ref12, ref13}, entre otras.
+	El Problema de Enrutamiento de Vehículos (VRP) es uno de los problemas de optimización combinatoria, más estudiado por su importancia tanto práctica como teórica. Formulado por Dantzig y Ramser en 1959 \cite{ref20}, el VRP consiste en diseñar rutas óptimas para una flota de vehículos que deben satisfacer la demanda de un conjunto de clientes dispersos geográficamente \cite{ref12}. Estos vehículos parten y regresan a un depósito, con el objetivo de minimizar un criterio de costo, como la distancia total recorrida \cite{ref5}. El VRP tiene aplicaciones prácticas en áreas como la logística, el transporte urbano y la distribución de bienes en grandes cadenas de suministro \cite{ref10, ref12, ref13}, entre otras.
 
 	Una característica esencial del VRP es su clasificación como problema NP-duro \cite{ref21}, lo que significa que encontrar una solución óptima es computacionalmente intratable para instancias grandes. Por ello, en la práctica, se recurre a heurísticas y metaheurísticas para obtener soluciones aproximadas con alta calidad en tiempos razonables \cite{ref9}.
 
@@ -39,7 +39,7 @@
 
 	Debido a su clasificación como un problema NP-Duro, se han desarrollado múltiples enfoques para resolverlos. Los métodos exactos, como la programación lineal entera y la ramificación y acotación, son efectivos para instancias pequeñas, pero su escalabilidad es limitada \cite{ref7}. En instancias más grandes, se emplean heurísticas y metaheurísticas como la búsqueda de vecindad variable (VNS) \cite{ref15}, los algoritmos genéticos \cite{ref9} y la colonia de hormigas \cite{ref28}. Estas técnicas buscan un balance entre la exploración del espacio de soluciones y la explotación de las áreas más prometedoras.
 
-	En la implementación de heurísticas y metaheurísticas para la solución del VRP, el concepto de solución juega un papel importante. En la siguiente sección se presenta la definición de solución del VRP y algunas de las operaciones que se pueden hacer sobre las mismas.
+	En la implementación de heurísticas y metaheurísticas para la solución del VRP el concepto de solución juega un papel importante. En la siguiente sección se presenta la definición de solución del VRP y algunas de las operaciones que se pueden hacer sobre las mismas.
 
 	\subsection{Soluciones del VRP}
 	\label{sec:Soluciones del VRP}
@@ -65,7 +65,7 @@
 
 	Este tipo de representación se usa en el desarrollo de las metaheurísticas como lo son los Algoritmos Genéticos \cite{ref13,ref8,ref9} y las Colonias de Hormigas \cite{ref28}. En estos enfoques, la solución se representa como un conjunto de rutas para capturar las características del problema, como la asignación de clientes, el cumplimiento de restricciones y la evaluación del costo asociado a las rutas. Además, esta forma estructurada facilita la manipulación y modificación de las soluciones durante la exploración del espacio de búsqueda.
 
-	Luego de haber definido qué es una solución del VRP, se puede definir qué es un criterio de vecindad. En el siguiente epígrafe se profundiza en este tema.
+	Luego de haber definido qué es una solución del VRP, se puede definir que es un criterio de vecindad. En el siguiente epígrafe se profundiza en este tema.
 
 
 	\section{Criterios de vecindad}
@@ -84,13 +84,13 @@
 		En este caso, se intercambian dos clientes entre diferentes rutas o dentro de la misma ruta.
 		\item
 		\textbf{Reinserción de subrutas:}
-		Esta operación consiste en extraer un grupo de clientes consecutivos de una ruta y reinsertarlos en una nueva posición dentro de la misma ruta o en una diferente, manteniendo su orden original.
+		Esta operación consiste en extraer un grupo de clientes consecutivos de una ruta y reinsertarlos en una nueva posición dentro de la misma ruta o en una diferente, manteniendo el su orden original.
 		\item
 		\textbf{Intercambio de subrutas:}
 		Estos criterios implican modificar subrutas intercambiando los clientes que pertenecen a las mismas, manteniendo el orden que poseían en su subruta. Por ejemplo, si se quieren intercambiar dos subrutas [1,2,3] y [8,7], se mueven todos los clientes de la primera subruta hacia la segunda en el mismo orden que se encontraban, lo mismo con los de la segunda subruta, por lo que el resultado seria [8,7] y [1,2,3].
 	\end{itemize}
 
-	Los criterios de vecindad definen qué tan grande o pequeño puede ser el cambio entre una solución y sus vecinas, y equilibran entre dos enfoques de búsqueda: intensificación y diversificación. La intensificación se enfoca en explorar soluciones cercanas para mejorar la calidad local, mientras que la diversificación permite moverse a regiones distantes del espacio de soluciones para evitar quedarse atrapado en óptimos locales. Sin embargo, en una vecindad existen regiones que poseen un mayor número de soluciones que mejoran a la actual, por lo tanto, explorar dichas regiones puede conducir a la solución de manera más rápida. En la siguiente sección se define qué es una región.
+	Los criterios de vecindad definen qué tan grande o pequeño puede ser el cambio entre una solución y sus vecinas, y equilibran entre dos enfoques de búsqueda: intensificación y diversificación. La intensificación se enfoca en explorar soluciones cercanas para mejorar la calidad local, mientras que la diversificación permite moverse a regiones distantes del espacio de soluciones para evitar quedarse atrapado en óptimos locales. Sin embargo, en una vecindad existen regiones que poseen un mayor número de soluciones que mejoran a la actual, por lo tanto, explorar dichas regiones puede conducir a la solución de manera más rápida. En la siguiente sección se define que es una región.
 
 	\subsection{Región de una vecindad}
 	\label{sec:Region de una vecindad}
@@ -115,7 +115,7 @@
 		Un mínimo se considera global si es un mínimo local para cualquiera sea el criterio de vecindad.
 	\end{enumerate}
 
-	Estos principios indican el uso de varios criterios de vecindad para resolver el problema, debido a que si se encuentra un óptimo local en uno de ellos, sea posible cambiar de criterio y continuar la exploración. En cambio, si hay un óptimo local para todos los criterios, entonces se puede afirmar que es el óptimo global del problema. Esta es la idea de la VNS.
+	Estos principios indican el uso de varios criterios de vecindad para resolver el problema, debido a que si se encuentra un óptimo local en uno de ellos, sea posible cambiar de criterio y continuar la exploración. En cambio, si hay un óptimo local para todos los criterios entonces se puede afirmar que es el óptimo global del problema. Esta es la idea de la VNS.
 
 	El algoritmo parte de una solución inicial y utiliza un conjunto finito de criterios de vecindad predefinidos. Durante cada iteración, se explora el entorno de la solución actual. Si se encuentra una mejora, la solución se actualiza y el proceso reinicia con la primera estructura, pero si no hay mejoras, se cambia a la siguiente vecindad hasta cumplir con las condiciones de parada.
 
@@ -129,27 +129,27 @@
 	\label{sec:GLPK}
 	GNU Linear Programming Kit (GLPK) es una biblioteca de \textit{software} diseñada para resolver problemas de programación lineal (PL) y programación lineal en enteros mixtos (MIP) \cite{ref25}. GLPK es parte del proyecto GNU y se distribuye bajo la Licencia Pública General de GNU \cite{ref27}, lo que lo convierte en una opción de código abierto ampliamente adoptada tanto en entornos académicos como industriales. Ofrece herramientas robustas y flexibles para modelar y resolver problemas de optimización combinatoria, siendo particularmente útil en aplicaciones como logística, transporte y gestión de recursos.
 
-	GLPK se centra en la resolución de problemas formulados en términos de modelos matemáticos, donde se maximiza o minimiza una función objetivo lineal, sujeto a un conjunto de restricciones lineales. Estos modelos se pueden especificar utilizando el lenguaje de modelado \textit{GNU Math Programming Language} (GMPL) \cite{ref26}. GMPL permite describir problemas de manera declarativa y concisa, separando la definición del modelo de los datos específicos, lo que facilita la reutilización y la adaptación del modelo a diferentes escenarios.
+	GLPK se centra en la resolución de problemas formulados en términos de modelos matemáticos, donde se maximiza o minimiza una función objetivo lineal sujeto a un conjunto de restricciones lineales. Estos modelos se pueden especificar utilizando el lenguaje de modelado \textit{GNU Math Programming Language} (GMPL) \cite{ref26}. GMPL permite describir problemas de manera declarativa y concisa, separando la definición del modelo de los datos específicos, lo que facilita la reutilización y la adaptación del modelo a diferentes escenarios.
 
-	Una de las características destacadas de GLPK es su implementación del método simplex revisado y del método primal-dual para resolver problemas de programación lineal \cite{ref25}. Para problemas más complejos, como los de programación lineal en enteros mixtos, GLPK utiliza un enfoque de ramificación y acotación (\textit{branch-and-cut}). Este enfoque combina técnicas de ramificación para dividir el problema en subproblemas más pequeños y métodos de corte para eliminar regiones inviables del espacio de búsqueda, mejorando la eficiencia del proceso.
+	Una de las características destacadas de GLPK es su implementación del método simplex revisado y del método primal-dual para resolver problemas de programación lineal \agregaesto{[REF]}. Para problemas más complejos, como los de programación lineal en enteros mixtos, GLPK utiliza un enfoque de ramificación y acotación (\textit{branch-and-cut}). Este enfoque combina técnicas de ramificación para dividir el problema en subproblemas más pequeños y métodos de corte para eliminar regiones inviables del espacio de búsqueda, mejorando la eficiencia del proceso.
 
-	La siguiente sección está dedicada al lenguaje de programación \textit{Common Lisp} y las razones que lo hacen eficiente para la solución del VRP. El presente estudio forma parte de un proyecto más amplio, desarrollado en \textit{Common Lisp}, cuyo objetivo es resolver instancias de VRP en poco tiempo.
+	La siguiente sección está dedicada al lenguaje de programación \textit{Common Lisp} y las razones que lo hacen eficiente para la solución del VRP. eE presente estudio forma parte de un proyecto más amplio, desarrollado en \textit{Common Lisp}, cuyo objetivo es resolver instancias de VRP en poco tiempo.
 
 
 	\section{Common Lisp}
 	\label{sec:lisp}
 
-	\textit{Common Lisp} (LISt Processing) es un lenguaje de programación creado en la década de 1980 como un estándar para unificar las distintas variantes de \textit{Lisp} que existían hasta ese momento. Su diseño permite trabajar con programación funcional, simbólica y orientada a objetos, lo que permite su uso en el desarrollo de inteligencia artificial, sistemas expertos y optimización matemática. En la Facultad de Matemática y Computación de la Universidad de La Habana, \textit{Common Lisp} se usa en la investigación del VRP y sus variantes \cite{ref3,ref4,ref5,ref6,ref18}.
+	Common Lisp (LISt Processing) es un lenguaje de programación creado en la década de 1980 como un estándar para unificar las distintas variantes de \textit{Lisp} que existían hasta ese momento. Su diseño permite trabajar con programación funcional, simbólica y orientada a objetos, lo que permite su uso en el desarrollo de inteligencia artificial, sistemas expertos y optimización matemática. En la Facultad de Matemática y Computación de la Universidad de La Habana, \textit{Common Lisp} se usa en la investigación del VRP y sus variantes \cite{ref3,ref4,ref5,ref6,ref18}.
 
-	Una de las principales razones para emplear \textit{Common LISP} en este contexto es su flexibilidad para prototipar rápidamente y su potente sistema de macros \cite{ref5}. Estas características permiten diseñar lenguajes de alto nivel para abordar problemas específicos con un esfuerzo humano reducido, simplificando tanto la creación como la modificación de modelos y algoritmos.
+	Una de las principales razones para emplear Common LISP en este contexto es su flexibilidad para prototipar rápidamente y su potente sistema de macros \cite{ref5}. Estas características permiten diseñar lenguajes de alto nivel para abordar problemas específicos con un esfuerzo humano reducido, simplificando tanto la creación como la modificación de modelos y algoritmos.
 
-	En trabajos previos, \textit{LISP} ha sido empleado para la generación automática de criterios de vecindad mediante lenguajes formales definidos con gramáticas libres del contexto \cite{ref18}. Estos lenguajes permiten crear cadenas que representan criterios de vecindad adaptados a las características específicas de cada variante del problema. Aunque este proyecto no utiliza directamente macros ni lenguajes formales, se enmarca dentro del sistema desarrollado en la facultad, que tributa a estos avances previos.
+	En trabajos previos, LISP ha sido empleado para la generación automática de criterios de vecindad mediante lenguajes formales definidos con gramáticas libres del contexto \cite{ref18}. Estos lenguajes permiten crear cadenas que representan criterios de vecindad adaptados a las características específicas de cada variante del problema. Aunque este proyecto no utiliza directamente macros ni lenguajes formales, se enmarca dentro del sistema desarrollado en la facultad, que tributa a estos avances previos.
 
-	Por lo tanto, el uso de \textit{Common LISP} en este trabajo no solo continúa esta línea de investigación, sino que también aprovecha las ventajas del lenguaje para estructurar y realizar operaciones complejas en el análisis de soluciones del VRP.
+	Por lo tanto, el uso de Common LISP en este trabajo no solo continúa esta línea de investigación, sino que también aprovecha las ventajas del lenguaje para estructurar y realizar operaciones complejas en el análisis de soluciones del VRP.
 
     En este capítulo se presentaron los elementos fundamentales sobre los cuales se construye la investigación. Se introdujo el Problema de Enrutamiento de Vehículos (VRP) y algunas de sus variantes, destacando sus múltiples aplicaciones prácticas. También se abordaron los conceptos de vecindades y regiones de una vecindad, que permiten guiar la búsqueda local en el espacio de soluciones.
 
-    Además, se presentó la metaheurística Búsqueda en Vecindades Variables (VNS), que ofrece un enfoque sistemático para explorar múltiples vecindades y superar óptimos locales. Por último, se describieron las herramientas principales empleadas en este trabajo, como la biblioteca GLPK para la resolución de modelos matemáticos y el lenguaje de programación \textit{Common Lisp}. El siguiente capítulo presenta los modelos de optimización propuestos en este trabajo para explorar vecindades. Estos modelos permiten identificar soluciones óptimas dentro de las vecindades.
+    Además, se presentó la metaheurística Búsqueda en Vecindades Variables (VNS), que ofrece un enfoque sistemático para explorar múltiples vecindades y superar óptimos locales. Por último, se describieron las herramientas principales empleadas en este trabajo, como la biblioteca GLPK para la resolución de modelos matemáticos y el lenguaje de programación Common Lisp. El siguiente capítulo presenta los modelos de optimización propuestos en este trabajo para explorar vecindades. Estos modelos permiten identificar soluciones óptimas dentro de las vecindades.
 
 	\bibliographystyle{plain}
 	\bibliography{../Bibliography}

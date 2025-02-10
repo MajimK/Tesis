@@ -1,0 +1,24 @@
+\documentclass[12pt]{report}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{tcolorbox}
+\usepackage{subcaption}
+\usepackage[spanish]{babel}
+\usepackage{lipsum}
+\usepackage{xcolor}
+
+\usepackage[lmargin=2cm, rmargin=5cm]{geometry}
+\input{../word-comments.tex}
+\begin{document}
+	\chapter*{Conclusiones}
+	\label{Conclusiones}
+
+	En este trabajo se proponen técnicas para la exploración eficiente de tres vecindades del Problema de Enrutamiento de Vehículos (VRP): reinserción de subrutas, intercambio de subrutas y extracción e inserción de dos clientes. Estas técnicas consisten en la creación de modelos de optimización diseñados para cada criterio de vecindad. Los modelos propuestos permiten identificar las mejores soluciones dentro de las vecindades, ademas de que reducen el tiempo de exploración en comparación con una búsqueda exhaustiva, lo cual permite el análisis de instancias más grandes del problema.
+
+	Un aporte de este trabajo es la estrategia desarrollada para la generación eficiente de los parámetros requeridos por los modelos. Para la generación de los datos, se divide las vecindades en regiones, lo que facilita el cálculo y almacenamiento de los datos necesarios para la resolución de los modelos. Esta división permite reducir la complejidad computacional de la generación de datos, garantizando que los modelos puedan operar de manera eficiente incluso en problemas con un gran número de clientes y rutas.
+
+	Los experimentos que se realizaron demostraron que, aunque los modelos de optimización son efectivos para explorar las vecindades y garantizar la obtención de soluciones óptimas, una búsqueda directa a través de los datos generados resulta ser aún más eficiente en términos de tiempo computacional. Esto resalta la importancia de las estrategias de generación de datos como una herramienta clave para la resolución de problemas complejos como el VRP.
+
+\end{document}

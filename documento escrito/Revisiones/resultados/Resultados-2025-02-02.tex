@@ -17,7 +17,7 @@
 \begin{document}
 \chapter{Resultados}
 \label{ch:Resultados}
-En este capítulo se presentan los resultados que se obtienen al explorar las vecindades de reinserción de subrutas, intercambio de subrutas y reinserción de dos clientes, utilizando los modelos de optimización creados en los capítulos anteriores. Para ello se utilizan tres instancias del Problema de Enrutamiento de Vehículos con restricción de Capacidad (CVRP), generadas a partir de la metodología propuesta en \cite{ref12}.
+En este capítulo se presentan los resultados que se obtienen al explorar las vecindades de reinserción de subrutas, intercambio de subrutas y reinserción de dos clientes, utilizando los modelos de optimización creados en los capítulos anteriores. Para ello se utilizan tres instancias del Problema de Enrutamiento de Vehículos con restricción de Capacidad (CVRP) generadas a partir de la metodología propuesta en \cite{ref12}.
 
 En la sección \ref{sec:Resultados de los modelos de optimización} se muestran los resultados de los modelos aplicados al CVRP y se analizan en términos de calidad de las soluciones y tiempo computacional, en comparación con una búsqueda exhaustiva. En la sección \ref{sec:Resultados de la Generación Eficiente de Datos} se presentan los beneficios de las estrategias implementadas para la generación y estructuración de datos, destacando su impacto en la exploración de vecindades, así como un análisis comparativo entre los modelos de optimización y una búsqueda simple basada en los datos generados, evaluando el desempeño relativo en diferentes escenarios.
 
@@ -28,15 +28,15 @@ Para evaluar el desempeño de los modelos de optimización, se llevaron a cabo e
 
 La búsqueda exhaustiva se implementó en el lenguaje \textit{Common Lisp}, aprovechando los trabajos previos desarrollados en la facultad \cite{ref18,ref3,ref4,ref5,ref6}. Este enfoque permite evaluar todas las posibles soluciones del problema y establecer una base comparativa para los resultados obtenidos con los modelos de optimización.
 
-Por otro lado, los modelos matemáticos se diseñaron e implementaron en el lenguaje de programación C++, utilizando grafos dirigidos para representar las soluciones del VRP. Debido a la integración de la biblioteca GLPK \textit{(GNU Linear Programming Kit)} con el lenguaje C++, las funciones \textit{glp\_add\_cols, glp\_set\_obj\_coef} y \textit{glp\_set\_row\_name}, nativas de GLPK se pudieron utilizar en C++, permitiendo la creación de las variables, la función objetivo y las restricciones del modelo.
+Por otro lado los modelos matemáticos se diseñaron e implementaron en el lenguaje de programación C++, utilizando grafos dirigidos para representar las soluciones del VRP. Debido a la integración de la biblioteca GLPK \textit{(GNU Linear Programming Kit)} con el lenguaje C++, las funciones \textit{glp\_add\_cols, glp\_set\_obj\_coef} y \textit{glp\_set\_row\_name}, nativas de GLPK se pudieron utilizar en C++, permitiendo la creación de las variables, la función objetivo y las restricciones del modelo.
 
 Los problemas utilizados para los experimentos fueron generados aleatoriamente con diferentes cantidades de clientes: 35, 62 y 150 clientes. Las distancias entre los clientes fueron números aleatorios en el rango de 1 a 50, mientras que las demandas de los clientes se generaron aleatoriamente entre 1 y 20. La capacidad de los vehículos fue calculada según una fórmula previamente descrita en \cite{ref12}. Se corrieron un total de cincuenta experimentos para cada algoritmo con cada uno de los grupos de clientes (35, 62 y 150 clientes).
 
-A continuación, se muestran los resultados para los criterios de vecindad de reinserción de subrutas e intercambio de subrutas, separados en dos epígrafes.
+A continuación, se muestran los resultados para los criterios de vecindad de reinserción de subrutas e intercambio de subrutas separados en dos epígrafes.
 \subsection{Resultados para la reinserción de subrutas}
 \label{sec:Resultados para la reinsercion de subrutas}
 
-La tabla \ref{tab:reinsercion_subruta} muestra las medidas de tendencia central y medidas de dispersión que se obtienen en cincuenta experimentos realizados para cada tamaño del problema. Se incluyen los resultados de la exploración exhaustiva y del modelo de optimización presentado para la vecindad de reinserción de subrutas. Su desempeño se compara en términos de tiempo de ejecución de cada algoritmo medido en segundos.
+La tabla \ref{tab:reinsercion_subruta} muestra las medidas de tendencia central y medidas de dispersión para cincuenta experimentos realizados para cada tamaño del problema. Se incluyen los resultados de la exploración exhaustiva y del modelo de optimización presentado para la vecindad de reinserción de subrutas. Su desempeño se compara en términos de tiempo de ejecución de cada algoritmo medido en segundos.
 
 \begin{table}[h]
 	\centering
@@ -66,7 +66,7 @@ Los resultados presentados en la tabla \ref{tab:reinsercion_subruta} permiten re
 	\item Desviación estándar: Para 150 clientes, el modelo presenta una desviación estándar de 0.06, mientras que la exploración exhaustiva tiene una desviación estándar de 0.22. Esto significa que los tiempos del modelo son menos dispersos alrededor de la media.
 \end{itemize}
 
-Además del análisis de las medidas de tendencia central y dispersión, se realizó una prueba de normalidad para verificar si los tiempos de ejecución se distribuyen de manera normal. La prueba de normalidad utilizada fue la prueba de Shapiro-Wilk \cite{ref29}, la cual es particularmente adecuada para muestras pequeñas, como las que se presentan en este estudio. La hipótesis nula ($H_0$) indica que la muestra sigue una distribución normal, mientras que la hipótesis alternativa ($H_a$) plantea que no distribuyen de manera normal. El resultado de esta prueba de hipótesis fue que los tiempos de ejecución de ambos algoritmos no siguen una distribución normal, en la tabla \ref{tab:Shapiro reincercion subrutas} se muestran los resultados de la prueba de normalidad.
+Además del análisis de las medidas de tendencia central y dispersión, se realizó una prueba de normalidad para verificar si los tiempos de ejecución se distribuyen de manera normal. La prueba de normalidad utilizada fue la prueba de Shapiro-Wilk \cite{ref29}, la cual es particularmente adecuada para muestras pequeñas, como las que se presentan en este estudio. La hipótesis nula ($H_0$) indica que la muestra sigue una distribución normal, mientras que la hipótesis alternativa ($H_a$) plantea que si distribuyen de manera normal El resultado de esta prueba de hipótesis fue que los tiempos de ejecución de ambos algoritmos no siguen una distribución normal, en la tabla \ref{tab:Shapiro reincercion subrutas} se muestran los resultados de la prueba de normalidad.
 
 \begin{table}[h]
 	\centering
@@ -107,14 +107,14 @@ Debido a que no se puede rechazar la hipótesis nula, se asume que las distribuc
 	\label{tab:Wilcoxon reinsercion subrutas}
 \end{table}
 
-Como se puede observar en la tabla \ref{tab:Wilcoxon reinsercion subrutas}, para instancias del problema con 62 y 150 clientes, se puede rechazar la hipótesis nula ($H_0$), lo cual indica que el modelo de optimización para problemas con una gran cantidad de clientes, es más rápido que una exploración exhaustiva.
+Como se puede observar en la tabla \ref{tab:Wilcoxon reinsercion subrutas}, para instancias del problema con 62 y 150 clientes, se puede rechazar la hipótesis nula ($H_0$), lo cual indica que el modelo de optimización para problemas con una gran cantidad de clientes, es mas rápido que una exploración exhaustiva.
 
 En el siguiente epígrafe se muestran los resultados para la vecindad de intercambio de subrutas.
 
 \subsection{Resultados para el intercambio de subrutas}
 \label{sec:Resultados para el intercambio de subrutas}
 
-La tabla \ref{tab:swap_subruta} muestra las medidas de tendencia central y dispersión para los resultados obtenidos en la vecindad de intercambio de subrutas. Su desempeño se compara en términos de tiempo de ejecución, medido en segundos.
+La tabla \ref{tab:swap_subruta} muestra las medidas de tendencia central y dispersión para los resultados obtenidos en la vecindad de intercambio de subrutas. Su desempeño se compara en términos de tiempo de ejecución medido en segundos.
 
 \begin{table}[h]
 	\centering
@@ -144,7 +144,7 @@ Los resultados presentados en la tabla \ref{tab:swap_subruta} permiten realizar 
 	\item Desviación estándar: En problemas pequeños, la variabilidad en los tiempos es baja para ambos métodos. Sin embargo, en problemas grandes, como los de 150 clientes, la desviación estándar del modelo (1.43 segundos) es mucho menor que la de la exploración exhaustiva (3.54 segundos), lo que indica una menor dispersión en los datos obtenidos del modelo.
 \end{itemize}
 
-Para los datos obtenidos en la vecindad de intercambio de subrutas, también se les realiza una prueba de normalidad Shapiro-Wilk, con el objetivo de analizar si distribuyen de manera normal. La hipótesis nula ($H_0$) indica que la muestra sigue una distribución normal, mientras que la hipótesis alternativa ($H_a$) plantea que no distribuyen de manera normal. Los resultados se muestran en la tabla \ref{tab:Shapiro swap subrutas}.
+Para los datos obtenidos en la vecindad de intercambio de subrutas, también se les realiza una prueba de normalidad Shapiro-Wilk, con el objetivo de analizar si distribuyen de manera normal. La hipótesis nula ($H_0$) indica que la muestra sigue una distribución normal, mientras que la hipótesis alternativa ($H_a$) plantea que si distribuyen de manera normal. Los resultados se muestran en la tabla \ref{tab:Shapiro swap subrutas}.
 
 \begin{table}[h]
 	\centering
@@ -168,7 +168,7 @@ Para los datos obtenidos en la vecindad de intercambio de subrutas, también se 
 
 Para problemas con 35 y 150 clientes, los datos distribuyen de manera normal, mientras que para instancias de 62 clientes, no se puede asumir la normalidad de los datos.
 
-Debido a los resultados mostrados en la tabla \ref{tab:Shapiro swap subrutas}, no se puede rechazar la hipótesis nula, por lo que se asume que los algoritmos para esos dos casos siguen una distribución normal. Por lo tanto, se realiza un prueba T-student para comparar las medias del modelo y de la exploración exhaustiva. La hipótesis nula ($H_0$) indica que no existen diferencias entre las medias de los algoritmos, y la hipótesis alternativa ($H_a$) indica que existe diferencias entre las medias de los grupos.
+Debido a los resultados mostrados en la tabla \ref{tab:Shapiro swap subrutas}, no se puede rechazar la hipótesis nula, por lo que se asume que los algoritmos para esos dos casos siguen una distribución normal. Por lo tanto se realiza un prueba T-student para comparar las medias del modelo y de la exploración exhaustiva. La hipótesis nula ($H_0$) indica que no existen diferencias entre las medias de los algoritmos, y la hipótesis alternativa ($H_a$) indica que existe diferencias entre las medias de los grupos.
 
 
 \begin{table}[h]
@@ -186,9 +186,9 @@ Debido a los resultados mostrados en la tabla \ref{tab:Shapiro swap subrutas}, n
 	\label{tab:t-student reinsercion subrutas}
 \end{table}
 
-Los resultados de la tabla \ref{tab:t-student reinsercion subrutas} indican la media del tiempo de ejecución de los modelos es realmente menor que la media del tiempo de ejecución de la exploración exhaustiva. Por lo tanto se puede afirmar que los modelos de optimización son más rápidos que la exploración exhaustiva.
+Los resultados de la tabla \ref{tab:t-student reinsercion subrutas} indican la media del tiempo de ejecución de los modelos es realmente menor que la media del tiempo de ejecución de la exploración exhaustiva. Por lo tanto se puede afirmar que los modelos de optimización son mas rápidos que la exploración exhaustiva.
 
-Los resultados obtenidos evidencian que el uso de modelos de optimización para explorar vecindades de una solución de un VRP puede mejorar el tiempo de búsqueda en las mismas. Sin embargo, para usar estos modelos de optimización, es necesario que los datos que estos utilizan sean generados eficientemente, sobre todo para vecindades que posean un mayor número de vecinos.
+Los resultados obtenidos evidencian que el uso de modelos de optimización para explorar vecindades de una solución de un VRP puede mejorar el tiempo de búsqueda en las mismas. Sin embargo para usar estos modelos de optimización, es necesario que los datos que estos utilizan sean generados eficientemente, especialmente para estructuras de vecindad que posean un mayor número de vecinos.
 
 En la siguiente sección, se presentan los resultados de la generación eficiente de los datos, evaluando cómo esta metodología contribuye a reducir la complejidad computacional y mejorar el rendimiento global en comparación con métodos tradicionales.
 
@@ -222,7 +222,7 @@ En la Tabla \ref{tab:result_efficient_generation}, se detallan los tiempos de ej
 	\label{tab:result_efficient_generation}
 \end{table}
 
-Como se evidencia en la tabla \ref{tab:result_efficient_generation}, la búsqueda en del mínimo de la vecindad en los datos generados en el capítulo \ref{chp:Técnicas para el cálculo del costo de los vecinos de una solución} puede ser más eficiente que realizar una búsqueda exhaustiva e incluso que resolver el modelo de optimización. Para validar la comparación resulta necesario verificar si los datos distribuyen de manera normal, para ello se realiza un test Shapiro-Wilk. Los resultados de la prueba se muestran en la tabla.
+Como se evidencia en la tabla \ref{tab:result_efficient_generation}, la búsqueda en del mínimo de la vecindad en los datos generados en el capítulo \ref{chp:Técnicas para el cálculo del costo de los vecinos de una solución} puede ser mas eficiente que realizar una búsqueda exhaustiva e incluso que resolver el modelo de optimización. Para validar la comparación resulta necesario verificar si los datos distribuyen de manera normal, para ello se realiza un test Shapiro-Wilk. Los resultados de la prueba se muestran en la tabla.
 
 \begin{table}[h]
 	\centering
@@ -243,7 +243,7 @@ Como se evidencia en la tabla \ref{tab:result_efficient_generation}, la búsqued
 
 Como se evidencia en la tabla \ref{tab:Shapiro 2model} los resultados de la exploración exhaustiva y la búsqueda en los datos, presentan una distribución normal y con los resultados de los modelos no se puede asumir que distribuyan normal. Debido a que el modelo no distribuye de manera normal se realiza una prueba de Wilcoxon entre los resultados del modelo de optimización, los resultados de la búsqueda exhaustiva y los resultados de la búsqueda en los datos. En la tabla \ref{tab:Wilcoxon 2model} se muestran los resultados de estas pruebas.
 
-En la primera fila de la tabla \ref{tab:Wilcoxon 2model} se muestra el estadístico y el p-valor de la prueba de Wilcoxon, realizada entre los resultados del modelo de optimización y los resultados de la búsqueda exhaustiva. En la segunda fila los valores para la prueba realizada entre los resultados del modelo de optimización y los resultados de la búsqueda en los datos.
+En la primera fila de la tabla \ref{tab:Wilcoxon 2model} se muestra el estadístico y el p-valor de la prueba de Wilcoxon realizada entre los resultados del modelo de optimización y los resultados de la búsqueda exhaustiva. En la segunda fila los valores para la prueba realizada entre los resultados del modelo de optimización y los resultados de la búsqueda en los datos.
 
 \begin{table}[h]
 	\centering
@@ -256,11 +256,11 @@ En la primera fila de la tabla \ref{tab:Wilcoxon 2model} se muestra el estadíst
 		Búsqueda en los datos  & 0.000 & 0.000 \\
 		\hline
 	\end{tabular}
-	\caption{Resultados de la prueba de Wilcoxon comparando el modelo de optimización con la búsqueda exhaustiva y con la búsqueda en los datos.}
+	\caption{Resultados de la prueba de Wilcoxon entre los datos del modelo y los datos de la busqueda exhaustiva y los datos de la búsqueda en los datos.}
 	\label{tab:Wilcoxon 2model}
 \end{table}
 
-Los resultados mostrados en la tabla \ref{tab:Wilcoxon 2model}, indican que la diferencia entre los tiempos de ejecución del modelo de optimización con la exploración exhaustiva y la búsqueda en los datos es real. Por lo tanto se puede concluir que el tiempo de ejecución del modelo de optimización es más rápido que el tiempo de ejecución de realizar una búsqueda exhaustiva, y a su vez más lento que el tiempo de ejecución de realizar la búsqueda en los datos.
+Los resultados mostrados en la tabla \ref{tab:Wilcoxon 2model}, indican que la diferencia entre los tiempos de ejecución del modelo de optimización con la exploración exhaustiva y la búsqueda en los datos es real. Por lo tanto se puede concluir que el tiempo de ejecución del modelo de optimización es mas rápido que el tiempo de ejecución de realizar una búsqueda exhaustiva, y a su vez mas lento que el tiempo de ejecución de realizar la búsqueda en los datos.
 
 Los resultados obtenidos destacan dos conclusiones principales. En primer lugar, la generación eficiente de datos contribuye a reducir el tiempo necesario para resolver el modelo de optimización. En segundo lugar, la búsqueda directa a través de los datos generados demuestra ser mucho más rápida que resolver el modelo completo, lo que sugiere que una estrategia ideal podría ser enfocarse en la generación de datos y emplearlos directamente para la búsqueda de soluciones.
 
