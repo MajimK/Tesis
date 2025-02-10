@@ -22,18 +22,18 @@
 
 
 
-    (with-basic-cvrp-solution (s1 ((33 34 4)
-(32 20 16 30)
-(6 13 29)
-(21 35)
-(10 25 19)
-(23 24 9 31 12)
-(22 1)
-(17 11 27)
-(3 8 15 5)
-(28 14 26)
-(7 18 2)
-)
+    (with-basic-cvrp-solution (s1 ((5 4 26 3)
+(21 35 34)
+(22 9 12 27)
+(2 6)
+(23 25 28 19)
+(33 31 18 7)
+(10 32 14 16 30)
+(29 24 8)
+(11 20)
+(17 15)
+(13 1)
+)			       
  p1)
 
       (let* ((wc (basic-working-copy s1))
@@ -49,8 +49,9 @@
           (doselect-route (r1 wc)
 	    (doselect-subroute (s1 r1 wc)
 	      (doselect-route (r2 wc)
-		(doinsert-subroute (s1 r2 wc)
-		  (setf current-delta-cost
+		(doselect-subroute (s2 r2 wc)
+		  (doswap-subroutes (s1 s2 wc) 
+		    (setf current-delta-cost
 			(delta-cost (reverse ops-list)
 				    wc
 				    p1
@@ -69,7 +70,7 @@
         (format t "the best neigh delta-cost: ~a~%" best-delta-cost)
         (format t "the best region: ~a~%" best-ops-list)
    
-        (clone best-ops-list)))))
+        (clone best-ops-list))))))
       
 
 
